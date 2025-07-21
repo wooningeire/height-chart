@@ -1,15 +1,27 @@
 <script lang="ts">
-    import type { Character } from "$lib/types/Character";
-    import ImagePlane from "./ImagePlane.svelte";
+import type { Character } from "$lib/types/Character";
+import ImagePlane, { type ImagePlaneClickEvent } from "./ImagePlane.svelte";
+import * as THREE from "three";
 
 let {
     character,
+    onClick,
+    onBottomLeftLocalCoordsChange,
 }: {
     character: Character,
+    onClick?: (coords: ImagePlaneClickEvent) => void,
+    onBottomLeftLocalCoordsChange?: (coords: {x: number, y: number}) => void,
 } = $props();
+
+let bottomLeftLocalCoords = $state({x: 0, y: 0});
 </script>
 
 <ImagePlane
     url={character.imageUrl}
-    position={[0, 0.5, 0]}
+    position={[-bottomLeftLocalCoords.x, -bottomLeftLocalCoords.y, 0]}
+    {onClick}
+    onBottomLeftLocalCoordsChange={value => {
+        bottomLeftLocalCoords = value;
+        onBottomLeftLocalCoordsChange?.(bottomLeftLocalCoords);
+    }}
 />

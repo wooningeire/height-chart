@@ -1,19 +1,24 @@
 <script lang="ts">
 import {T} from "@threlte/core";
-import {OrbitControls} from "@threlte/extras";
-import ImagePlane from "./ImagePlane.svelte";
-import type { SvelteMap, SvelteSet } from "svelte/reactivity";
-    import type { Character } from "$lib/types/Character";
-    import CharacterReference from "./CharacterReference.svelte";
+import {interactivity, OrbitControls} from "@threlte/extras";
+import type { SvelteMap } from "svelte/reactivity";
+import type { Character } from "$lib/types/Character";
+import CharacterReference from "./CharacterReference.svelte";
+import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
 
 let {
     characters,
-    uploadedImage,
+    addedCharacter,
+    onSetStart,
+    onSetEnd,
 }: {
     characters: SvelteMap<string, Character>,
-    uploadedImage: {url: string, file: File} | null,
+    addedCharacter: Character | null,
+    onSetStart?: (point: {x: number, y: number}) => void,
+    onSetEnd?: (point: {x: number, y: number}) => void,
 } = $props();
 
+interactivity();
 </script>
 
 <T.DirectionalLight
@@ -40,7 +45,7 @@ let {
 
 <T.PerspectiveCamera
     makeDefault
-    position={[5, 5, 5]}
+    position={[2, 2, 3]}
     fov={30}
 >
     <OrbitControls 
@@ -66,10 +71,11 @@ let {
 {/each}
 
 
-{#if uploadedImage !== null}
-    <ImagePlane
-        url={uploadedImage.url}
-        position={[0, 0.5, 0]} 
+{#if addedCharacter !== null}
+    <CharacterSizeEditor
+        character={addedCharacter}
+        {onSetStart}
+        {onSetEnd}
     />
 {/if}
 

@@ -1,12 +1,12 @@
-export type SizeBaseline = {
-    x: number,
-    y: number,
-    length: number,
+export type Segment = {
+    start: {x: number, y: number} | null,
+    end: {x: number, y: number} | null,
+    referenceLength: number,
 };
 
 export type Character = {
     id: string,
     name: string,
     imageUrl: string,
-    sizeBaseline: SizeBaseline,
+    sizeBaseline: Segment,
 };

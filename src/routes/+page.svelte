@@ -4,12 +4,12 @@ import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
 import * as THREE from "three";
-import type { Character } from "$lib/types/Character";
+import { type Character } from "$lib/types/Character";
 
 
 const characters = $state(new SvelteMap<string, Character>());
 
-let uploadedImage = $state<{url: string, file: File} | null>(null);
+let addedCharacter = $state<Character | null>(null);
 
 const handleImageUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -22,14 +22,29 @@ const handleImageUpload = (event: Event) => {
 
     const reader = new FileReader();
     reader.addEventListener("load", () => {
-        uploadedImage = {
-            url: reader.result as string,
-            file,
+        addedCharacter = {
+            id: file.name,
+            name: file.name,
+            imageUrl: reader.result as string,
+            sizeBaseline: {
+                start: null,
+                end: null,
+                referenceLength: 1,
+            },
         };
     });
     reader.readAsDataURL(file);
 };
 
+const onSetStart = (point: {x: number, y: number}) => {
+    if (addedCharacter === null) return;
+    addedCharacter.sizeBaseline.start = point;
+};
+
+const onSetEnd = (point: {x: number, y: number}) => {
+    if (addedCharacter === null) return;
+    addedCharacter.sizeBaseline.end = point;
+};
 </script>
 
 <main>
@@ -45,10 +60,10 @@ const handleImageUpload = (event: Event) => {
         </label>
         
         {#if characters.size > 0}
-            <div class="image-list">
-                <h3>Uploaded Images:</h3>
+            <div class="character-list">
+                <h3>Characters</h3>
                 {#each characters as [id, character] (id)}
-                    <div class="image-item">
+                    <div class="character">
                         <img src={character.imageUrl} alt={character.name} />
                         <span>{character.name}</span>
                         <!-- <button onclick={() => removeImage(id)}>Remove</button> -->
@@ -61,7 +76,9 @@ const handleImageUpload = (event: Event) => {
     <Canvas shadows={THREE.PCFSoftShadowMap}>
         <Scene
             {characters}
-            {uploadedImage}
+            {addedCharacter}
+            {onSetStart}
+            {onSetEnd}
         />
     </Canvas>
 </main>
@@ -75,14 +92,11 @@ main {
 
 .controls {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
+    z-index: 1;
+    padding: 1rem;
+
+    background: oklch(1 0 0 / 0.5);
+    backdrop-filter: blur(0.5rem);
 }
 
 .upload-btn {
@@ -104,7 +118,7 @@ main {
     }
 }
 
-.image-list {
+.character-list {
     margin-top: 20px;
     
     h3 {
@@ -113,7 +127,7 @@ main {
     }
 }
 
-.image-item {
+.character {
     display: flex;
     align-items: center;
     gap: 10px;
