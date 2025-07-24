@@ -1,12 +1,9 @@
-export type Segment = {
-    start: {x: number, y: number} | null,
-    end: {x: number, y: number} | null,
-    length: number,
-};
+import type { CubicBezierCurve3 } from "three";
+import type { CompositeCurve } from "./CompositeCurve.svelte";
 
 export type Character = {
     id: string,
     name: string,
     imageUrl: string,
-    referenceSegment: Segment,
+    referenceCurve: CompositeCurve,
 };

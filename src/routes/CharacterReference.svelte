@@ -10,7 +10,7 @@ let {
     onTextureChange,
 }: {
     character: Character,
-    onPointerDown?: (coords: ImagePlaneClickEvent) => void,
+    onClick?: (coords: ImagePlaneClickEvent) => void,
     onBottomLeftLocalCoordsChange?: (coords: {x: number, y: number}) => void,
     onTextureChange?: (texture: THREE.Texture) => void,
 } = $props();

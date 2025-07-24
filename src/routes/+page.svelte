@@ -3,15 +3,16 @@ import "./index.scss";
 import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
-import * as THREE from "three";
+import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap} from "three";
 import { type Character } from "$lib/types/Character";
-import PointEntry from "@/PointEntry.svelte";
+import NumberEntry from "@/NumberEntry.svelte";
+import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
 
 let addedCharacter = $state<Character | null>(null);
-let addedCharacterTexture = $state<THREE.Texture | null>(null);
+let addedCharacterTexture = $state<Texture | null>(null);
 
 const handleImageUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -28,25 +29,23 @@ const handleImageUpload = (event: Event) => {
             id: file.name,
             name: file.name,
             imageUrl: reader.result as string,
-            referenceSegment: {
-                start: null,
-                end: null,
-                length: 1,
-            },
+            referenceCurve: new CompositeCurve({
+                segments: [
+                    new CubicBezierCurve3(
+                        new Vector3(0.125, 0.125, 0),
+                        new Vector3(0.35, 0.5, 0),
+                        new Vector3(0.75, 0.35, 0),
+                        new Vector3(0.875, 0.875, 0),
+                    ),
+                ],
+                targetLength: 1,
+            }),
         };
     });
     reader.readAsDataURL(file);
 };
 
-const onSetStart = (point: {x: number, y: number}) => {
-    if (addedCharacter === null) return;
-    addedCharacter.referenceSegment.start = point;
-};
-
-const onSetEnd = (point: {x: number, y: number}) => {
-    if (addedCharacter === null) return;
-    addedCharacter.referenceSegment.end = point;
-};
+const id = $props.id();
 </script>
 
 <main>
@@ -69,56 +68,17 @@ const onSetEnd = (point: {x: number, y: number}) => {
                 />
             </div>
 
-            {@const height = addedCharacterTexture?.height ?? 0}
-
             <div>
-                <div>point 1</div>
+                <label for="refcurve-length-{id}">Length of reference curve</label>
 
-                <div>
-                    <PointEntry
-                        x={(addedCharacter.referenceSegment.start?.x ?? 0) * height}
-                        y={(addedCharacter.referenceSegment.start?.y ?? 0) * height}
-                        onXChange={value => {
-                            if (addedCharacter === null) return;
-                            addedCharacter.referenceSegment.start = {
-                                x: value / height,
-                                y: addedCharacter.referenceSegment.start?.y ?? 0,
-                            };
-                        }}
-                        onYChange={value => {
-                            if (addedCharacter === null) return;
-                            addedCharacter.referenceSegment.start = {
-                                x: addedCharacter.referenceSegment.start?.x ?? 0,
-                                y: value / height,
-                            };
-                        }}
-                    />
-                </div>
-            </div>
-
-            <div>
-                <div>point 2</div>
-
-                <div>
-                    <PointEntry
-                        x={(addedCharacter.referenceSegment.end?.x ?? 0) * height}
-                        y={(addedCharacter.referenceSegment.end?.y ?? 0) * height}
-                        onXChange={value => {
-                            if (addedCharacter === null) return;
-                            addedCharacter.referenceSegment.start = {
-                                x: value / height,
-                                y: addedCharacter.referenceSegment.end?.y ?? 0,
-                            };
-                        }}
-                        onYChange={value => {
-                            if (addedCharacter === null) return;
-                            addedCharacter.referenceSegment.start = {
-                                x: addedCharacter.referenceSegment.end?.x ?? 0,
-                                y: value / height,
-                            };
-                        }}
-                    />
-                </div>
+                <NumberEntry
+                    value={addedCharacter.referenceCurve.targetLength}
+                    onValueChange={value => {
+                        if (addedCharacter === null) return;
+                        addedCharacter.referenceCurve.targetLength = value;
+                    }}
+                    id="refcurve-length-{id}"
+                />
             </div>
         {/if}
         
@@ -136,12 +96,14 @@ const onSetEnd = (point: {x: number, y: number}) => {
         {/if}
     </div>
     
-    <Canvas shadows={THREE.PCFSoftShadowMap}>
+    <Canvas shadows={PCFSoftShadowMap}>
         <Scene
             {characters}
             {addedCharacter}
-            {onSetStart}
-            {onSetEnd}
+            onAddedCharacterReferenceCurveChange={value => {
+                if (addedCharacter === null) return;
+                addedCharacter.referenceCurve.segments = value;
+            }}
             onAddedCharacterTextureChange={value => addedCharacterTexture = value}
         />
     </Canvas>

@@ -5,20 +5,18 @@ import type { SvelteMap } from "svelte/reactivity";
 import type { Character } from "$lib/types/Character";
 import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
-import * as THREE from "three";
+import {Texture, CubicBezierCurve3} from "three";
 
 let {
     characters,
     addedCharacter,
-    onSetStart,
-    onSetEnd,
+    onAddedCharacterReferenceCurveChange,
     onAddedCharacterTextureChange,
 }: {
     characters: SvelteMap<string, Character>,
     addedCharacter: Character | null,
-    onSetStart?: (point: {x: number, y: number}) => void,
-    onSetEnd?: (point: {x: number, y: number}) => void,
-    onAddedCharacterTextureChange?: (texture: THREE.Texture) => void,
+    onAddedCharacterReferenceCurveChange?: (referenceCurve: CubicBezierCurve3[]) => void,
+    onAddedCharacterTextureChange?: (texture: Texture) => void,
 } = $props();
 
 
@@ -26,13 +24,13 @@ interactivity();
 </script>
 
 <T.DirectionalLight
-    position={[0.25, 1, 0.5]}
+    position={[-0.25, 1, -0.5]}
     intensity={0.8}
     castShadow
 />
 
 <T.DirectionalLight
-    position={[0.5, 1, -0.5]}
+    position={[0.125, 1, 1]}
     intensity={1.5}
     castShadow
 />
@@ -85,8 +83,7 @@ interactivity();
 {#if addedCharacter !== null}
     <CharacterSizeEditor
         character={addedCharacter}
-        {onSetStart}
-        {onSetEnd}
+        onReferenceCurveChange={onAddedCharacterReferenceCurveChange}
         onTextureChange={onAddedCharacterTextureChange}
     />
 {/if}
