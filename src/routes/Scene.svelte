@@ -8,18 +8,16 @@ import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
 import {Texture, CubicBezierCurve3} from "three";
 import {sceneState} from "$/lib/types/SceneState.svelte";
-    import type { Bezier } from "$/lib/types/Bezier.svelte";
+import type { Bezier } from "$/lib/types/Bezier.svelte";
 
 let {
     characters,
     addedCharacter,
     onAddedCharacterReferenceCurveChange,
-    onAddedCharacterTextureChange,
 }: {
     characters: SvelteMap<string, Character>,
     addedCharacter: Character | null,
     onAddedCharacterReferenceCurveChange?: (referenceCurve: Bezier[]) => void,
-    onAddedCharacterTextureChange?: (texture: Texture) => void,
 } = $props();
 
 
@@ -89,7 +87,6 @@ interactivity();
     <CharacterSizeEditor
         character={addedCharacter}
         onReferenceCurveChange={onAddedCharacterReferenceCurveChange}
-        onTextureChange={onAddedCharacterTextureChange}
     />
 {/if}
 

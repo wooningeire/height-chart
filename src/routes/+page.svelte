@@ -3,7 +3,7 @@ import "./index.scss";
 import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
-import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap} from "three";
+import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap, TextureLoader, SRGBColorSpace} from "three";
 import { type Character } from "$lib/types/Character";
 import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
@@ -13,9 +13,40 @@ import { Bezier } from "$/lib/types/Bezier.svelte";
 const characters = $state(new SvelteMap<string, Character>());
 
 let addedCharacter = $state<Character | null>(null);
-let addedCharacterTexture = $state<Texture | null>(null);
 
-const handleImageUpload = (event: Event) => {
+const readAsDataUrl = (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+            resolve(reader.result as string);
+        });
+        reader.addEventListener("error", reject);
+        reader.readAsDataURL(file);
+    });
+};
+
+const loadTexture = (url: string) => {
+    return new Promise<Texture>((resolve, reject) => {
+        const loader = new TextureLoader();
+
+        loader.load(
+            url,
+            loadedTexture => {
+                if (loadedTexture === null) return;
+
+                loadedTexture.colorSpace = SRGBColorSpace;
+                loadedTexture.premultiplyAlpha = false;
+                resolve(loadedTexture);
+            },
+            undefined,
+            error => {
+                reject(error);
+            },
+        );
+    });
+};
+
+const handleImageUpload = async (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = target.files;
     
@@ -24,26 +55,25 @@ const handleImageUpload = (event: Event) => {
 
     if (!file.type.startsWith("image/")) return;
 
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-        addedCharacter = {
-            id: file.name,
-            name: file.name,
-            imageUrl: reader.result as string,
-            referenceCurve: new CompositeCurve({
-                segments: [
-                    new Bezier({
-                        start: new Vector3(0.125, 0.125, 0),
-                        end: new Vector3(0.875, 0.875, 0),
-                        startDeriv: new Vector3(0.35, 0.5, 0),
-                        endDeriv: new Vector3(0.75, 0.35, 0),
-                    }),
-                ],
-                targetLength: 1,
-            }),
-        };
-    });
-    reader.readAsDataURL(file);
+    const dataUrl = await readAsDataUrl(file);
+    const texture = await loadTexture(dataUrl);
+    addedCharacter = {
+        id: file.name,
+        name: file.name,
+        imageUrl: dataUrl,
+        texture,
+        referenceCurve: new CompositeCurve({
+            segments: [
+                new Bezier({
+                    start: new Vector3(0.125, 0.125, 0),
+                    end: new Vector3(0.875, 0.875, 0),
+                    startDeriv: new Vector3(0.35, 0.5, 0),
+                    endDeriv: new Vector3(0.75, 0.35, 0),
+                }),
+            ],
+            targetLength: 1,
+        }),
+    };
 };
 
 const id = $props.id();
@@ -101,7 +131,6 @@ const id = $props.id();
         <Scene
             {characters}
             {addedCharacter}
-            onAddedCharacterTextureChange={value => addedCharacterTexture = value}
         />
     </Canvas>
 </main>

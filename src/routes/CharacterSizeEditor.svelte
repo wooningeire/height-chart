@@ -10,11 +10,9 @@ import type { Bezier } from "$/lib/types/Bezier.svelte";
 let {
     character,
     onReferenceCurveChange,
-    onTextureChange,
 }: {
     character: Character,
     onReferenceCurveChange?: (referenceCurve: Bezier[]) => void,
-    onTextureChange?: (texture: Texture) => void,
 } = $props();
 
 let innerGroupRef = $state<Group | null>(null);
@@ -24,7 +22,10 @@ $effect(() => {
     scaleFac.target = character.referenceCurve.targetScaleFac;
 });
 
-let bottomLeftLocalCoords = $state({x: 0, y: 0});
+let bottomLeftLocalCoords = $derived({
+    x: -character.texture.width / character.texture.height / 2,
+    y: -0.5,
+});
 
 let innerGroupMatrix = $derived.by(() => {
     if (innerGroupRef === null) return new Matrix4();
@@ -43,8 +44,6 @@ let innerGroupMatrix = $derived.by(() => {
     >
         <CharacterReference
             {character}
-            onBottomLeftLocalCoordsChange={value => bottomLeftLocalCoords = value}
-            {onTextureChange}
         />
 
         <CurveEditor

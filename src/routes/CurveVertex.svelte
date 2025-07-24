@@ -13,11 +13,13 @@ let {
     onPositionChange?: (position: [number, number, number]) => void,
 } = $props();
 
-const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp, hovering} = new DraggerAgainstZPlane({
+const dragger = new DraggerAgainstZPlane({
     sceneState,
     onPositionDrag,
     onPositionChange,
 });
+
+const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp} = dragger;
 </script>
 
 <svelte:window
@@ -31,6 +33,6 @@ const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp
     onpointerleave={onPointerLeave}
     onpointerdown={onPointerDown}
 >
-    <T.BoxGeometry args={[0.05, 0.05, 0.05]} />
-    <T.MeshToonMaterial emissive={hovering ? "#f00" : "#fff"} />
+    <T.BoxGeometry args={[0.025, 0.025, 0.025]} />
+    <T.MeshToonMaterial emissive={dragger.hovering ? "#f00" : "#fff"} />
 </T.Mesh>

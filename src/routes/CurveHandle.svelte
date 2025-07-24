@@ -13,11 +13,13 @@ let {
     onPositionChange?: (position: [number, number, number]) => void,
 } = $props();
 
-const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp, hovering} = new DraggerAgainstZPlane({
+const dragger = new DraggerAgainstZPlane({
     sceneState,
     onPositionDrag,
     onPositionChange,
 });
+
+const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp} = dragger;
 </script>
 
 
@@ -32,6 +34,6 @@ const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp
     onpointerleave={onPointerLeave}
     onpointerdown={onPointerDown}
 >
-    <T.SphereGeometry args={[0.025]} />
-    <T.MeshToonMaterial emissive={hovering ? "#f00" : "#fff"} />
+    <T.SphereGeometry args={[0.0125]} />
+    <T.MeshToonMaterial emissive={dragger.hovering ? "#f00" : "#fff"} />
 </T.Mesh>

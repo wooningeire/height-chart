@@ -1,30 +1,19 @@
 <script lang="ts">
 import type { Character } from "$lib/types/Character";
 import ImagePlane from "./ImagePlane.svelte";
-import * as THREE from "three";
+import {Mesh, Vector3} from "three";
 
 let {
     character,
-    onBottomLeftLocalCoordsChange,
-    onTextureChange,
     meshRef = $bindable(),
 }: {
     character: Character,
-    onBottomLeftLocalCoordsChange?: (coords: {x: number, y: number}) => void,
-    onTextureChange?: (texture: THREE.Texture) => void,
-    meshRef?: THREE.Mesh,
+    meshRef?: Mesh,
 } = $props();
-
-let bottomLeftLocalCoords = $state({x: 0, y: 0});
 </script>
 
 <ImagePlane
-    url={character.imageUrl}
-    position={[-bottomLeftLocalCoords.x, -bottomLeftLocalCoords.y, 0]}
-    onBottomLeftLocalCoordsChange={value => {
-        bottomLeftLocalCoords = value;
-        onBottomLeftLocalCoordsChange?.(bottomLeftLocalCoords);
-    }}
-    {onTextureChange}
+    texture={character.texture}
+    position={[character.texture.width / character.texture.height / 2, 0.5, 0]}
     bind:meshRef
 />
