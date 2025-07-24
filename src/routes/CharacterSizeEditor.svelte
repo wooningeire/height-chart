@@ -2,18 +2,20 @@
 import type { Character } from "$lib/types/Character";
 import { T } from "@threlte/core";
 import { type ImagePlaneClickEvent } from "./ImagePlane.svelte";
-    import CharacterReference from "./CharacterReference.svelte";
-    import { MeshLineGeometry, MeshLineMaterial } from "@threlte/extras";
-    import * as THREE from "three";
+import CharacterReference from "./CharacterReference.svelte";
+import { MeshLineGeometry, MeshLineMaterial } from "@threlte/extras";
+import * as THREE from "three";
 
 let {
     character,
     onSetStart,
     onSetEnd,
+    onTextureChange,
 }: {
     character: Character,
     onSetStart?: (point: {x: number, y: number}) => void,
     onSetEnd?: (point: {x: number, y: number}) => void,
+    onTextureChange?: (texture: THREE.Texture) => void,
 } = $props();
 
 let isSelectingSegmentStart = $state(true);
@@ -36,33 +38,34 @@ const handleImageClick = (coords: ImagePlaneClickEvent) => {
 };
 </script>
 
-<T.Group>
+<T.Group position={[bottomLeftLocalCoords.x, 0, 0]}>
     <CharacterReference
         {character}
         onClick={handleImageClick}
         onBottomLeftLocalCoordsChange={value => bottomLeftLocalCoords = value}
+        {onTextureChange}
     />
 
-    {#if character.sizeBaseline.start}
-        <T.Mesh position={[character.sizeBaseline.start.x, character.sizeBaseline.start.y, 0]}>
+    {#if character.referenceSegment.start}
+        <T.Mesh position={[character.referenceSegment.start.x, character.referenceSegment.start.y, 0]}>
             <T.SphereGeometry args={[0.02]} />
-            <T.MeshBasicMaterial color="#fff" />
+            <T.MeshToonMaterial emissive="#fff" />
         </T.Mesh>
     {/if}
 
-    {#if character.sizeBaseline.end}
-        <T.Mesh position={[character.sizeBaseline.end.x, character.sizeBaseline.end.y, 0]}>
+    {#if character.referenceSegment.end}
+        <T.Mesh position={[character.referenceSegment.end.x, character.referenceSegment.end.y, 0]}>
             <T.SphereGeometry args={[0.02]} />
-            <T.MeshBasicMaterial color="#fff" />
+            <T.MeshToonMaterial emissive="#fff" />
         </T.Mesh>
     {/if}
 
-    {#if character.sizeBaseline.start && character.sizeBaseline.end}
+    {#if character.referenceSegment.start && character.referenceSegment.end}
         <T.Mesh>
             <MeshLineGeometry
                 points={[
-                    new THREE.Vector3(character.sizeBaseline.start.x, character.sizeBaseline.start.y, 0),
-                    new THREE.Vector3(character.sizeBaseline.end.x, character.sizeBaseline.end.y, 0),
+                    new THREE.Vector3(character.referenceSegment.start.x, character.referenceSegment.start.y, 0),
+                    new THREE.Vector3(character.referenceSegment.end.x, character.referenceSegment.end.y, 0),
                 ]}
             />
             <MeshLineMaterial

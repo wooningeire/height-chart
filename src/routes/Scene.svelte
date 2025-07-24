@@ -1,22 +1,26 @@
 <script lang="ts">
 import {T} from "@threlte/core";
-import {interactivity, OrbitControls} from "@threlte/extras";
+import {ContactShadows, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
 import type { SvelteMap } from "svelte/reactivity";
 import type { Character } from "$lib/types/Character";
 import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
+import * as THREE from "three";
 
 let {
     characters,
     addedCharacter,
     onSetStart,
     onSetEnd,
+    onAddedCharacterTextureChange,
 }: {
     characters: SvelteMap<string, Character>,
     addedCharacter: Character | null,
     onSetStart?: (point: {x: number, y: number}) => void,
     onSetEnd?: (point: {x: number, y: number}) => void,
+    onAddedCharacterTextureChange?: (texture: THREE.Texture) => void,
 } = $props();
+
 
 interactivity();
 </script>
@@ -43,6 +47,7 @@ interactivity();
     intensity={1}
 />
 
+
 <T.PerspectiveCamera
     makeDefault
     position={[2, 2, 3]}
@@ -61,14 +66,20 @@ interactivity();
     receiveShadow
 >
     <T.PlaneGeometry args={[20, 20]} />
-    <T.MeshStandardMaterial color="#fff" />
+    <T.MeshPhysicalMaterial color="#fff" />
 </T.Mesh>
 
-<T.GridHelper args={[20, 20, "#999999", "#cccccc"]} />
+<T.GridHelper
+    args={[20, 20, "#999", "#eee"]}
+/>
 
-{#each characters as [id, character] (id)}
-    <CharacterReference {character} />
-{/each}
+
+
+<T.Group>
+    {#each characters as [id, character] (id)}
+        <CharacterReference {character} />
+    {/each}
+</T.Group>
 
 
 {#if addedCharacter !== null}
@@ -76,6 +87,7 @@ interactivity();
         character={addedCharacter}
         {onSetStart}
         {onSetEnd}
+        onTextureChange={onAddedCharacterTextureChange}
     />
 {/if}
 

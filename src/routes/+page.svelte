@@ -5,11 +5,13 @@ import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
 import * as THREE from "three";
 import { type Character } from "$lib/types/Character";
+import PointEntry from "@/PointEntry.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
 
 let addedCharacter = $state<Character | null>(null);
+let addedCharacterTexture = $state<THREE.Texture | null>(null);
 
 const handleImageUpload = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -26,10 +28,10 @@ const handleImageUpload = (event: Event) => {
             id: file.name,
             name: file.name,
             imageUrl: reader.result as string,
-            sizeBaseline: {
+            referenceSegment: {
                 start: null,
                 end: null,
-                referenceLength: 1,
+                length: 1,
             },
         };
     });
@@ -38,26 +40,87 @@ const handleImageUpload = (event: Event) => {
 
 const onSetStart = (point: {x: number, y: number}) => {
     if (addedCharacter === null) return;
-    addedCharacter.sizeBaseline.start = point;
+    addedCharacter.referenceSegment.start = point;
 };
 
 const onSetEnd = (point: {x: number, y: number}) => {
     if (addedCharacter === null) return;
-    addedCharacter.sizeBaseline.end = point;
+    addedCharacter.referenceSegment.end = point;
 };
 </script>
 
 <main>
     <div class="controls">
-        <label for="image-upload" class="upload-btn">
-            Add
-            <input 
-                id="image-upload"
-                type="file" 
-                accept="image/*" 
-                onchange={handleImageUpload}
-            />
-        </label>
+        {#if addedCharacter === null}
+            <label for="image-upload" class="upload-btn">
+                Add
+                <input 
+                    id="image-upload"
+                    type="file" 
+                    accept="image/*" 
+                    onchange={handleImageUpload}
+                />
+            </label>
+        {:else}
+            <div>
+                <img
+                    src={addedCharacter.imageUrl}
+                    alt={addedCharacter.name}
+                />
+            </div>
+
+            {@const height = addedCharacterTexture?.height ?? 0}
+
+            <div>
+                <div>point 1</div>
+
+                <div>
+                    <PointEntry
+                        x={(addedCharacter.referenceSegment.start?.x ?? 0) * height}
+                        y={(addedCharacter.referenceSegment.start?.y ?? 0) * height}
+                        onXChange={value => {
+                            if (addedCharacter === null) return;
+                            addedCharacter.referenceSegment.start = {
+                                x: value / height,
+                                y: addedCharacter.referenceSegment.start?.y ?? 0,
+                            };
+                        }}
+                        onYChange={value => {
+                            if (addedCharacter === null) return;
+                            addedCharacter.referenceSegment.start = {
+                                x: addedCharacter.referenceSegment.start?.x ?? 0,
+                                y: value / height,
+                            };
+                        }}
+                    />
+                </div>
+            </div>
+
+            <div>
+                <div>point 2</div>
+
+                <div>
+                    <PointEntry
+                        x={(addedCharacter.referenceSegment.end?.x ?? 0) * height}
+                        y={(addedCharacter.referenceSegment.end?.y ?? 0) * height}
+                        onXChange={value => {
+                            if (addedCharacter === null) return;
+                            addedCharacter.referenceSegment.start = {
+                                x: value / height,
+                                y: addedCharacter.referenceSegment.end?.y ?? 0,
+                            };
+                        }}
+                        onYChange={value => {
+                            if (addedCharacter === null) return;
+                            addedCharacter.referenceSegment.start = {
+                                x: addedCharacter.referenceSegment.end?.x ?? 0,
+                                y: value / height,
+                            };
+                        }}
+                    />
+                </div>
+            </div>
+        {/if}
         
         {#if characters.size > 0}
             <div class="character-list">
@@ -79,6 +142,7 @@ const onSetEnd = (point: {x: number, y: number}) => {
             {addedCharacter}
             {onSetStart}
             {onSetEnd}
+            onAddedCharacterTextureChange={value => addedCharacterTexture = value}
         />
     </Canvas>
 </main>
@@ -164,5 +228,9 @@ main {
             background: #c82333;
         }
     }
+}
+
+img {
+    max-width: 8rem;
 }
 </style>

@@ -10,7 +10,7 @@ export type ImagePlaneClickEvent = {
 <script lang="ts">
 import {T} from "@threlte/core";
 import {type IntersectionEvent} from "@threlte/extras";
-    import { untrack } from "svelte";
+import { untrack } from "svelte";
 import * as THREE from "three";
 
 let {

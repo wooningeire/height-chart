@@ -7,10 +7,12 @@ let {
     character,
     onClick,
     onBottomLeftLocalCoordsChange,
+    onTextureChange,
 }: {
     character: Character,
-    onClick?: (coords: ImagePlaneClickEvent) => void,
+    onPointerDown?: (coords: ImagePlaneClickEvent) => void,
     onBottomLeftLocalCoordsChange?: (coords: {x: number, y: number}) => void,
+    onTextureChange?: (texture: THREE.Texture) => void,
 } = $props();
 
 let bottomLeftLocalCoords = $state({x: 0, y: 0});
@@ -24,4 +26,5 @@ let bottomLeftLocalCoords = $state({x: 0, y: 0});
         bottomLeftLocalCoords = value;
         onBottomLeftLocalCoordsChange?.(bottomLeftLocalCoords);
     }}
+    {onTextureChange}
 />
