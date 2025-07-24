@@ -7,7 +7,7 @@ import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap} from "three";
 import { type Character } from "$lib/types/Character";
 import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
-    import { Bezier } from "$/lib/types/Bezier.svelte";
+import { Bezier } from "$/lib/types/Bezier.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());

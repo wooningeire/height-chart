@@ -22,49 +22,75 @@ let curveSegments = $state(curve);
 
 const finalCurveSegment = $derived(curveSegments.at(-1));
 
-let currentDraggedIndex = $state<number | null>(null);
-let currentDraggedPosition = $state<Vector3 | null>(null);
+type DragType = "vertex" | "startDeriv" | "endDeriv";
 
-const onVertexPositionDrag = (index: number, position: [number, number, number]) => {
-    currentDraggedPosition = new Vector3(...position).applyMatrix4(groupMatrixInverse);
-    console.log(position, currentDraggedPosition);
-    currentDraggedIndex = index;
+let currentDrag = $state<{
+    index: number,
+    position: Vector3,
+    type: DragType,
+} | null>(null);
 
+const onPositionDrag = (index: number, position: [number, number, number], type: DragType) => {
+    currentDrag = {
+        index,
+        position: new Vector3(...position).applyMatrix4(groupMatrixInverse),
+        type,
+    };
 };
 
-const onVertexPositionChange = (index: number, position: [number, number, number]) => {
+const onPositionChange = (index: number, position: [number, number, number], type: DragType) => {
     const transformedPosition = new Vector3(...position).applyMatrix4(groupMatrixInverse);
 
-    if (index < curveSegments.length) {
-        curveSegments[index].start = transformedPosition;
+    switch (type) {
+        case "vertex":
+            if (index < curveSegments.length) {
+                curveSegments[index].start = transformedPosition;
+            }
+            if (index > 0) {
+                curveSegments[index - 1].end = transformedPosition;
+            }
+            break;
+
+        case "startDeriv":
+            curveSegments[index].startDeriv = transformedPosition;
+            break;
+
+        case "endDeriv":
+            curveSegments[index].endDeriv = transformedPosition;
+            break;
     }
-    if (index > 0) {
-        curveSegments[index - 1].end = transformedPosition;
-    }
+
 
     onCurveChange?.(curveSegments);
 
-    currentDraggedPosition = null;
-    currentDraggedIndex = null;
+    currentDrag = null;
 };
 </script>
 
 {#each curveSegments as curveSegment, i}
-    {@const vertexPosition = currentDraggedIndex === i && currentDraggedPosition !== null
-        ? currentDraggedPosition
+    {@const startPosition = currentDrag !== null && currentDrag.type === "vertex" && currentDrag.index === i
+        ? currentDrag.position
         : curveSegment.start
     }
-    {@const nextVertexPosition = currentDraggedIndex === i + 1 && currentDraggedPosition !== null
-        ? currentDraggedPosition
+    {@const endPosition = currentDrag !== null && currentDrag.type === "vertex" && currentDrag.index === i + 1
+        ? currentDrag.position
         : curveSegment.end
+    }
+    {@const startDerivPosition = currentDrag !== null && currentDrag.type === "startDeriv" && currentDrag.index === i
+        ? currentDrag.position
+        : curveSegment.startDeriv
+    }
+    {@const endDerivPosition = currentDrag !== null && currentDrag.type === "endDeriv" && currentDrag.index === i
+        ? currentDrag.position
+        : curveSegment.endDeriv
     }
 
     <T.Mesh>
         <MeshLineGeometry points={new CubicBezierCurve3(
-            vertexPosition,
-            curveSegment.startDeriv,
-            curveSegment.endDeriv,
-            nextVertexPosition,
+            startPosition,
+            startDerivPosition,
+            endDerivPosition,
+            endPosition,
         ).getPoints(32)} />
         <MeshLineMaterial
             color="#fff"
@@ -73,15 +99,23 @@ const onVertexPositionChange = (index: number, position: [number, number, number
     </T.Mesh>
 
     <CurveVertex
-        position={vertexPosition.toArray()}
-        onPositionDrag={position => onVertexPositionDrag(i, position)}
-        onPositionChange={position => onVertexPositionChange(i, position)}
+        position={startPosition.toArray()}
+        onPositionDrag={position => onPositionDrag(i, position, "vertex")}
+        onPositionChange={position => onPositionChange(i, position, "vertex")}
     />
-    <CurveHandle position={curveSegment.startDeriv.toArray()} />
-    <CurveHandle position={curveSegment.endDeriv.toArray()} />
+    <CurveHandle
+        position={startDerivPosition.toArray()}
+        onPositionDrag={position => onPositionDrag(i, position, "startDeriv")}
+        onPositionChange={position => onPositionChange(i, position, "startDeriv")}
+    />
+    <CurveHandle
+        position={endDerivPosition.toArray()}
+        onPositionDrag={position => onPositionDrag(i, position, "endDeriv")}
+        onPositionChange={position => onPositionChange(i, position, "endDeriv")}
+    />
     
     <T.Mesh>
-        <MeshLineGeometry points={[vertexPosition, curveSegment.startDeriv]} />
+        <MeshLineGeometry points={[startPosition, startDerivPosition]} />
         <MeshLineMaterial
             color="#fff"
             width={0.025 * meshLineScaleFac}
@@ -92,7 +126,7 @@ const onVertexPositionChange = (index: number, position: [number, number, number
     </T.Mesh>
 
     <T.Mesh>
-        <MeshLineGeometry points={[nextVertexPosition, curveSegment.endDeriv]} />
+        <MeshLineGeometry points={[endPosition, endDerivPosition]} />
         <MeshLineMaterial
             color="#fff"
             width={0.025 * meshLineScaleFac}
@@ -105,14 +139,14 @@ const onVertexPositionChange = (index: number, position: [number, number, number
 
 
 {#if finalCurveSegment}
-    {@const finalVertexPosition = currentDraggedIndex === curveSegments.length && currentDraggedPosition !== null
-        ? currentDraggedPosition
+    {@const finalStartPosition = currentDrag !== null && currentDrag.type === "vertex" && currentDrag.index === curveSegments.length
+        ? currentDrag.position
         : finalCurveSegment.end
     }
 
     <CurveVertex
-        position={finalVertexPosition.toArray()}
-        onPositionDrag={position => onVertexPositionDrag(curveSegments.length, position)}
-        onPositionChange={position => onVertexPositionChange(curveSegments.length, position)}
+        position={finalStartPosition.toArray()}
+        onPositionDrag={position => onPositionDrag(curveSegments.length, position, "vertex")}
+        onPositionChange={position => onPositionChange(curveSegments.length, position, "vertex")}
     />
 {/if}

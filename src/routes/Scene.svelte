@@ -7,7 +7,7 @@ import type { Character } from "$lib/types/Character";
 import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
 import {Texture, CubicBezierCurve3} from "three";
-import {sceneState} from "$/routes/SceneState.svelte";
+import {sceneState} from "$/lib/types/SceneState.svelte";
     import type { Bezier } from "$/lib/types/Bezier.svelte";
 
 let {

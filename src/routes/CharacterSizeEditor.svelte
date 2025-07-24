@@ -32,8 +32,6 @@ let innerGroupMatrix = $derived.by(() => {
     void bottomLeftLocalCoords, scaleFac.current;
     return innerGroupRef.matrixWorld.clone().invert();
 });
-
-$inspect(innerGroupMatrix);
 </script>
 
 <T.Group
