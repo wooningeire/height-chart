@@ -1,14 +1,16 @@
 <script lang="ts">
-import {setContext} from "svelte";
+import {setContext, untrack} from "svelte";
 import {T} from "@threlte/core";
 import {ContactShadows, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
 import type { SvelteMap } from "svelte/reactivity";
 import type { Character } from "$lib/types/Character";
 import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
-import {Texture, CubicBezierCurve3} from "three";
+import {Texture, CubicBezierCurve3, PerspectiveCamera, Vector3} from "three";
 import {sceneState} from "$/lib/types/SceneState.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
+    import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
+    import { spring, Spring } from "svelte/motion";
 
 let {
     characters,
@@ -22,6 +24,36 @@ let {
 
 
 interactivity();
+
+
+let controls: OrbitControlsType | null = $state(null);
+let oldScale: number | null = null;
+$effect(() => {
+    const newScale = addedCharacter?.referenceCurve.targetScaleFac ?? null;
+
+    if (newScale !== null && oldScale !== null) {
+        untrack(() => {
+            if (controls === null) return;
+
+            cameraZoom.set(1);
+            oldCameraDirection = sceneState.camera.position.clone().sub(controls.target);
+            cameraZoom.target = newScale / oldScale!;
+        });
+    }
+
+    oldScale = newScale;
+});
+
+let oldCameraDirection: Vector3 | null = null;
+const cameraZoom = new Spring(1);
+$effect(() => {
+    void cameraZoom.current;
+
+    untrack(() => {
+        if (controls === null || oldCameraDirection === null) return;
+        sceneState.camera.position.set(...controls.target.clone().addScaledVector(oldCameraDirection, cameraZoom.current).toArray());
+    });
+});
 </script>
 
 <T.DirectionalLight
@@ -57,6 +89,7 @@ interactivity();
         enableDamping
         dampingFactor={0.05}
         enabled={sceneState.cameraControlsEnabled}
+        bind:ref={() => undefined, value => controls = value!}
     />
 </T.PerspectiveCamera>
 

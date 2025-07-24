@@ -20,18 +20,23 @@ const raycast = (planeNormal: Vector3, planePoint: Vector3, clientX: number, cli
     if (Math.abs(denominator) <= Number.EPSILON) return planePoint;
 
     const t = -planeNormal.dot(raycaster.ray.origin.clone().sub(planePoint)) / denominator;
-    const intersection = raycaster.ray.origin.clone().add(raycaster.ray.direction.clone().multiplyScalar(t));
+    if (t <= 0) return planePoint;
 
+    const intersection = raycaster.ray.origin.clone().add(raycaster.ray.direction.clone().multiplyScalar(t));
     return intersection;
 };
 
+
+const DRAG_THRESHOLD = 4;
 export class DraggerAgainstZPlane {
     readonly sceneState = $state<SceneState>()!;
     readonly onPositionDrag?: (position: Vector3) => void;
     readonly onPositionChange?: (position: Vector3) => void;
+    readonly onSelect?: () => void;
 
     hovering = $state(false);
     dragging = $state(false);
+    pointerDownPosition = $state<{x: number, y: number} | null>(null);
 
     readonly isMovingAlongZAxis = $derived(modifierKeys.ctrl);
 
@@ -49,7 +54,7 @@ export class DraggerAgainstZPlane {
         if (event.nativeEvent.button !== 0) return;
 
         this.sceneState.cameraControlsEnabled = false;
-        this.dragging = true;
+        this.pointerDownPosition = {x: event.nativeEvent.clientX, y: event.nativeEvent.clientY};
     };
 
     readonly zAxisCoords = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent): Vector3 => {
@@ -70,27 +75,34 @@ export class DraggerAgainstZPlane {
         return new Vector3(intersection.x, intersection.y, planePoint.z).applyMatrix4(groupMatrix.clone().invert());
     };
 
-    readonly onPointerMove = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
-        if (!this.dragging) return;
-
-        const newCoords = this.isMovingAlongZAxis
+    readonly #localPosition = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
+        return this.isMovingAlongZAxis
             ? this.zAxisCoords(currentPosition, groupMatrix, event)
             : this.zPlaneCoords(currentPosition, groupMatrix, event);
+    };
 
-        this.onPositionDrag?.(newCoords);
+    readonly onPointerMove = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
+        if (!this.pointerDownPosition) return;
+        if (!this.dragging && Math.hypot(event.clientX - this.pointerDownPosition.x, event.clientY - this.pointerDownPosition.y) < DRAG_THRESHOLD) return;
+
+        this.dragging = true;
+        this.onPositionDrag?.(this.#localPosition(currentPosition, groupMatrix, event));
     };
 
     readonly onPointerUp = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
-        if (!this.dragging || event.button !== 0) return;
+        if (event.button !== 0) return;
+
+        if (!this.dragging && this.pointerDownPosition) {
+            this.onSelect?.();
+        }
+        this.pointerDownPosition = null;
+
+        if (!this.dragging) return;
 
         this.sceneState.cameraControlsEnabled = true;
         this.dragging = false;
 
-        const newCoords = this.isMovingAlongZAxis
-            ? this.zAxisCoords(currentPosition, groupMatrix, event)
-            : this.zPlaneCoords(currentPosition, groupMatrix, event);
-
-        this.onPositionChange?.(newCoords);
+        this.onPositionChange?.(this.#localPosition(currentPosition, groupMatrix, event));
     };
     
     readonly #setEnterCursor: () => void;
@@ -100,14 +112,17 @@ export class DraggerAgainstZPlane {
         sceneState,
         onPositionDrag,
         onPositionChange,
+        onSelect,
     }: {
         sceneState: SceneState,
         onPositionDrag?: (position: Vector3) => void,
         onPositionChange?: (position: Vector3) => void,
+        onSelect?: () => void,
     }) {
         this.sceneState = sceneState;
         this.onPositionDrag = onPositionDrag;
         this.onPositionChange = onPositionChange;
+        this.onSelect = onSelect;
         
         ({
             onPointerEnter: this.#setEnterCursor,

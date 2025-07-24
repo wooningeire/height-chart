@@ -9,6 +9,7 @@ import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 import { Bezier } from "$/lib/types/Bezier.svelte";
     import Button from "@/Button.svelte";
+    import Separator from "@/Separator.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -95,36 +96,38 @@ const id = $props.id();
 </script>
 
 <main>
-    <div class="controls">
-        <Button onClick={() => fileInputEl.click()}>
-            {#if addedCharacter === null}
-                Add a character
-            {:else}
-                Use a different image
+    <character-overlay>
+        <added-character-details>
+            <Button onClick={() => fileInputEl.click()}>
+                {#if addedCharacter === null}
+                    Add a character
+                {:else}
+                    Replace image
+                {/if}
+            </Button>
+
+            {#if addedCharacter !== null}
+                <added-character-image>
+                    <img
+                        src={addedCharacter.imageUrl}
+                        alt={addedCharacter.name}
+                    />
+                </added-character-image>
+
+                <Separator />
+
+                <div>
+                    <NumberEntry
+                        value={addedCharacter.referenceCurve.targetLength}
+                        label="Length of reference curve"
+                        onValueChange={value => {
+                            if (addedCharacter === null) return;
+                            addedCharacter.referenceCurve.targetLength = value;
+                        }}
+                    />
+                </div>
             {/if}
-        </Button>
-
-        {#if addedCharacter !== null}
-            <div>
-                <img
-                    src={addedCharacter.imageUrl}
-                    alt={addedCharacter.name}
-                />
-            </div>
-
-            <div>
-                <label for="refcurve-length-{id}">Length of reference curve</label>
-
-                <NumberEntry
-                    value={addedCharacter.referenceCurve.targetLength}
-                    onValueChange={value => {
-                        if (addedCharacter === null) return;
-                        addedCharacter.referenceCurve.targetLength = value;
-                    }}
-                    id="refcurve-length-{id}"
-                />
-            </div>
-        {/if}
+        </added-character-details>
         
         {#if characters.size > 0}
             <div class="character-list">
@@ -138,7 +141,7 @@ const id = $props.id();
                 {/each}
             </div>
         {/if}
-    </div>
+    </character-overlay>
     
     <Canvas shadows={PCFSoftShadowMap}>
         <Scene
@@ -163,16 +166,35 @@ main {
     position: relative;
 }
 
-.controls {
-    position: absolute;
-    z-index: 1;
+character-overlay {
+    position: fixed;
     padding: 1rem;
+    max-width: 16rem;
 
     background: oklch(1 0 0 / 0.5);
     backdrop-filter: blur(0.5rem);
+
+    z-index: 1;
 }
 input[type="file"] {
     display: none;
+}
+
+added-character-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+added-character-image {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-height: 10rem;
+}
+
+img {
+    width: 100%;
 }
 
 .character-list {
@@ -194,8 +216,8 @@ input[type="file"] {
     border-radius: 4px;
     
     img {
-        width: 40px;
-        height: 40px;
+        width: 100%;
+        max-height: 40px;
         object-fit: cover;
         border-radius: 4px;
     }
@@ -221,9 +243,5 @@ input[type="file"] {
             background: #c82333;
         }
     }
-}
-
-img {
-    max-width: 8rem;
 }
 </style>

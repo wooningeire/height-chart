@@ -11,12 +11,14 @@ let {
     position,
     onPositionDrag,
     onPositionChange,
+    onSelect,
     meshLineScaleFac = 1,
     groupMatrix,
 }: {
     position: [number, number, number],
     onPositionDrag?: (position: Vector3) => void,
     onPositionChange?: (position: Vector3) => void,
+    onSelect?: () => void,
     meshLineScaleFac?: number,
     groupMatrix: Matrix4,
 } = $props();
@@ -25,6 +27,7 @@ const dragger = new DraggerAgainstZPlane({
     sceneState,
     onPositionDrag,
     onPositionChange,
+    onSelect,
 });
 
 const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp} = dragger;
