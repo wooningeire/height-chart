@@ -2,15 +2,21 @@
 import {T} from "@threlte/core";
 import {sceneState} from "../lib/types/SceneState.svelte";
 import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
+    import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
+    import { Matrix4, Vector3 } from "three";
 
 let {
     position,
     onPositionDrag,
     onPositionChange,
+    meshLineScaleFac = 1,
+    groupMatrix,
 }: {
     position: [number, number, number],
-    onPositionDrag?: (position: [number, number, number]) => void,
-    onPositionChange?: (position: [number, number, number]) => void,
+    onPositionDrag?: (position: Vector3) => void,
+    onPositionChange?: (position: Vector3) => void,
+    meshLineScaleFac?: number,
+    groupMatrix: Matrix4,
 } = $props();
 
 const dragger = new DraggerAgainstZPlane({
@@ -23,8 +29,14 @@ const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp
 </script>
 
 <svelte:window
-    onpointerup={onPointerUp}
-    onpointermove={onPointerMove}
+    onpointerup={event => onPointerUp(position, groupMatrix, event)}
+    onpointermove={event => onPointerMove(position, groupMatrix, event)}
+/>
+
+<ZAxisMovementIndicator
+    {position}
+    {dragger}
+    {meshLineScaleFac}
 />
 
 <T.Mesh

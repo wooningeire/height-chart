@@ -1,72 +1,100 @@
 import { SceneState } from "$/lib/types/SceneState.svelte";
+import { modifierKeys } from "$/routes/ModifierKeys.svelte";
 import { useCursor, type IntersectionEvent } from "@threlte/extras";
-import { Raycaster, Vector2, Vector3 } from "three";
+import { Camera, Matrix4, Raycaster, Vector2, Vector3 } from "three";
+
+
+const raycast = (planeNormal: Vector3, planePoint: Vector3, clientX: number, clientY: number, camera: Camera) => {
+    const raycaster = new Raycaster();
+
+    // Convert mouse position to normalized device coordinates (-1 to +1)
+    const mouse = new Vector2(
+        (clientX / innerWidth) * 2 - 1,
+        -(clientY / innerHeight) * 2 + 1
+    );
+
+    raycaster.setFromCamera(mouse, camera);
+
+    // Calculate intersection with plane
+    const denominator = planeNormal.dot(raycaster.ray.direction);
+    if (Math.abs(denominator) <= Number.EPSILON) return planePoint;
+
+    const t = -planeNormal.dot(raycaster.ray.origin.clone().sub(planePoint)) / denominator;
+    const intersection = raycaster.ray.origin.clone().add(raycaster.ray.direction.clone().multiplyScalar(t));
+
+    return intersection;
+};
 
 export class DraggerAgainstZPlane {
     readonly sceneState = $state<SceneState>()!;
-    readonly onPositionDrag?: (position: [number, number, number]) => void;
-    readonly onPositionChange?: (position: [number, number, number]) => void;
+    readonly onPositionDrag?: (position: Vector3) => void;
+    readonly onPositionChange?: (position: Vector3) => void;
 
     hovering = $state(false);
     dragging = $state(false);
 
-    onPointerEnter = () => {
+    readonly isMovingAlongZAxis = $derived(modifierKeys.ctrl);
+
+    readonly onPointerEnter = () => {
         this.hovering = true;
         this.#setEnterCursor();
     };
 
-    onPointerLeave = () => {
+    readonly onPointerLeave = () => {
         this.hovering = false;
         this.#setLeaveCursor();
     };
 
-    onPointerDown = (event: IntersectionEvent<PointerEvent>) => {
+    readonly onPointerDown = (event: IntersectionEvent<PointerEvent>) => {
         if (event.nativeEvent.button !== 0) return;
 
         this.sceneState.cameraControlsEnabled = false;
         this.dragging = true;
     };
 
-    zPlaneCoords = (event: PointerEvent): [number, number, number] => {
-        const planeNormal = new Vector3(0, 0, 1);
-        const planePoint = new Vector3(0, 0, 0);
-        const raycaster = new Raycaster();
+    readonly zAxisCoords = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent): Vector3 => {
+        const planeNormal = new Vector3(1, 0, 0);
+        const planePoint = new Vector3(...currentPosition).applyMatrix4(groupMatrix);
+        
+        const intersection = raycast(planeNormal, planePoint, event.clientX, event.clientY, this.sceneState.camera);
 
-        // Convert mouse position to normalized device coordinates (-1 to +1)
-        const mouse = new Vector2(
-            (event.clientX / innerWidth) * 2 - 1,
-            -(event.clientY / innerHeight) * 2 + 1
-        );
-
-        raycaster.setFromCamera(mouse, this.sceneState.camera);
-
-        // Calculate intersection with z=0 plane
-        const denominator = planeNormal.dot(raycaster.ray.direction);
-        if (Math.abs(denominator) <= Number.EPSILON) return [0, 0, 0];
-
-        const t = -planeNormal.dot(raycaster.ray.origin.clone().sub(planePoint)) / denominator;
-        const intersection = raycaster.ray.origin.clone().add(raycaster.ray.direction.clone().multiplyScalar(t));
-
-        return [intersection.x, intersection.y, 0];
+        return new Vector3(planePoint.x, intersection.y, intersection.z).applyMatrix4(groupMatrix.clone().invert());
     };
 
-    onPointerMove = (event: PointerEvent) => {
+    readonly zPlaneCoords = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent): Vector3 => {
+        const planeNormal = new Vector3(0, 0, 1);
+        const planePoint = new Vector3(...currentPosition).applyMatrix4(groupMatrix);
+
+        const intersection = raycast(planeNormal, planePoint, event.clientX, event.clientY, this.sceneState.camera);
+
+        return new Vector3(intersection.x, intersection.y, planePoint.z).applyMatrix4(groupMatrix.clone().invert());
+    };
+
+    readonly onPointerMove = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
         if (!this.dragging) return;
 
-        this.onPositionDrag?.(this.zPlaneCoords(event));
+        const newCoords = this.isMovingAlongZAxis
+            ? this.zAxisCoords(currentPosition, groupMatrix, event)
+            : this.zPlaneCoords(currentPosition, groupMatrix, event);
+
+        this.onPositionDrag?.(newCoords);
     };
 
-    onPointerUp = (event: PointerEvent) => {
+    readonly onPointerUp = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
         if (!this.dragging || event.button !== 0) return;
 
         this.sceneState.cameraControlsEnabled = true;
         this.dragging = false;
 
-        this.onPositionChange?.(this.zPlaneCoords(event));
+        const newCoords = this.isMovingAlongZAxis
+            ? this.zAxisCoords(currentPosition, groupMatrix, event)
+            : this.zPlaneCoords(currentPosition, groupMatrix, event);
+
+        this.onPositionChange?.(newCoords);
     };
     
-    #setEnterCursor: () => void;
-    #setLeaveCursor: () => void;
+    readonly #setEnterCursor: () => void;
+    readonly #setLeaveCursor: () => void;
 
     constructor({
         sceneState,
@@ -74,8 +102,8 @@ export class DraggerAgainstZPlane {
         onPositionChange,
     }: {
         sceneState: SceneState,
-        onPositionDrag?: (position: [number, number, number]) => void,
-        onPositionChange?: (position: [number, number, number]) => void,
+        onPositionDrag?: (position: Vector3) => void,
+        onPositionChange?: (position: Vector3) => void,
     }) {
         this.sceneState = sceneState;
         this.onPositionDrag = onPositionDrag;

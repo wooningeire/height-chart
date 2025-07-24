@@ -8,6 +8,7 @@ import { type Character } from "$lib/types/Character";
 import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 import { Bezier } from "$/lib/types/Bezier.svelte";
+    import Button from "@/Button.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -25,7 +26,7 @@ const readAsDataUrl = (file: File) => {
     });
 };
 
-const loadTexture = (url: string) => {
+const createTexture = (url: string) => {
     return new Promise<Texture>((resolve, reject) => {
         const loader = new TextureLoader();
 
@@ -46,52 +47,64 @@ const loadTexture = (url: string) => {
     });
 };
 
-const handleImageUpload = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
+const loadTexture = async (file: File) => {
+    const dataUrl = await readAsDataUrl(file);
+    const texture = await createTexture(dataUrl);
+    return {dataUrl, texture};
+};
+
+let fileInputEl = $state<HTMLInputElement>()!;
+const handleImageUpload = async () => {
+    const files = fileInputEl.files;
     
-    if (files === null) return;
+    if (files === null) return null;
     const file = files[0];
 
-    if (!file.type.startsWith("image/")) return;
+    if (!file.type.startsWith("image/")) return null;
 
-    const dataUrl = await readAsDataUrl(file);
-    const texture = await loadTexture(dataUrl);
-    addedCharacter = {
-        id: file.name,
-        name: file.name,
-        imageUrl: dataUrl,
-        texture,
-        referenceCurve: new CompositeCurve({
-            segments: [
-                new Bezier({
-                    start: new Vector3(0.125, 0.125, 0),
-                    end: new Vector3(0.875, 0.875, 0),
-                    startDeriv: new Vector3(0.35, 0.5, 0),
-                    endDeriv: new Vector3(0.75, 0.35, 0),
-                }),
-            ],
-            targetLength: 1,
-        }),
-    };
+    const {dataUrl, texture} = await loadTexture(file);
+
+    if (addedCharacter === null) {
+        addedCharacter = {
+            id: file.name,
+            name: file.name,
+            imageUrl: dataUrl,
+            texture,
+            referenceCurve: new CompositeCurve({
+                segments: [
+                    new Bezier({
+                        start: new Vector3(0.125, 0.125, 0),
+                        end: new Vector3(0.875, 0.875, 0),
+                        startDeriv: new Vector3(0.35, 0.5, 0),
+                        endDeriv: new Vector3(0.75, 0.35, 0),
+                    }),
+                ],
+                targetLength: 1,
+            }),
+        };
+    } else {
+        addedCharacter.id = file.name;
+        addedCharacter.name = file.name;
+        addedCharacter.imageUrl = dataUrl;
+        addedCharacter.texture = texture;
+    }
 };
 
 const id = $props.id();
+
 </script>
 
 <main>
     <div class="controls">
-        {#if addedCharacter === null}
-            <label for="image-upload" class="upload-btn">
-                Add
-                <input 
-                    id="image-upload"
-                    type="file" 
-                    accept="image/*" 
-                    onchange={handleImageUpload}
-                />
-            </label>
-        {:else}
+        <Button onClick={() => fileInputEl.click()}>
+            {#if addedCharacter === null}
+                Add a character
+            {:else}
+                Use a different image
+            {/if}
+        </Button>
+
+        {#if addedCharacter !== null}
             <div>
                 <img
                     src={addedCharacter.imageUrl}
@@ -134,6 +147,14 @@ const id = $props.id();
         />
     </Canvas>
 </main>
+        
+<input 
+    id="image-upload-{id}"
+    type="file" 
+    accept="image/*" 
+    onchange={handleImageUpload}
+    bind:this={fileInputEl}
+/>
 
 <style lang="scss">
 main {
@@ -150,24 +171,8 @@ main {
     background: oklch(1 0 0 / 0.5);
     backdrop-filter: blur(0.5rem);
 }
-
-.upload-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s;
-    
-    &:hover {
-        background: #0056b3;
-    }
-    
-    input[type="file"] {
-        display: none;
-    }
+input[type="file"] {
+    display: none;
 }
 
 .character-list {

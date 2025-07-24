@@ -31,7 +31,7 @@ let innerGroupMatrix = $derived.by(() => {
     if (innerGroupRef === null) return new Matrix4();
 
     void bottomLeftLocalCoords, scaleFac.current;
-    return innerGroupRef.matrixWorld.clone().invert();
+    return innerGroupRef.matrixWorld;
 });
 </script>
 
@@ -50,7 +50,7 @@ let innerGroupMatrix = $derived.by(() => {
             curve={character.referenceCurve.segments}
             onCurveChange={onReferenceCurveChange}
             meshLineScaleFac={character.referenceCurve.targetScaleFac}
-            groupMatrixInverse={innerGroupMatrix}
+            groupMatrix={innerGroupMatrix}
         />
     </T.Group>
 </T.Group>

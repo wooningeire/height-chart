@@ -10,12 +10,12 @@ let {
     curve,
     onCurveChange,
     meshLineScaleFac = 1,
-    groupMatrixInverse,
+    groupMatrix,
 }: {
     curve: Bezier[],
     onCurveChange?: (curves: Bezier[]) => void,
     meshLineScaleFac?: number,
-    groupMatrixInverse: Matrix4,
+    groupMatrix: Matrix4,
 } = $props();
 
 let curveSegments = $state(curve);
@@ -30,33 +30,32 @@ let currentDrag = $state<{
     type: DragType,
 } | null>(null);
 
-const onPositionDrag = (index: number, position: [number, number, number], type: DragType) => {
+
+const onPositionDrag = (index: number, position: Vector3, type: DragType) => {
     currentDrag = {
         index,
-        position: new Vector3(...position).applyMatrix4(groupMatrixInverse),
+        position,
         type,
     };
 };
 
-const onPositionChange = (index: number, position: [number, number, number], type: DragType) => {
-    const transformedPosition = new Vector3(...position).applyMatrix4(groupMatrixInverse);
-
+const onPositionChange = (index: number, position: Vector3, type: DragType) => {
     switch (type) {
         case "vertex":
             if (index < curveSegments.length) {
-                curveSegments[index].start = transformedPosition;
+                curveSegments[index].start = position;
             }
             if (index > 0) {
-                curveSegments[index - 1].end = transformedPosition;
+                curveSegments[index - 1].end = position;
             }
             break;
 
         case "startDeriv":
-            curveSegments[index].startDeriv = transformedPosition;
+            curveSegments[index].startDeriv = position;
             break;
 
         case "endDeriv":
-            curveSegments[index].endDeriv = transformedPosition;
+            curveSegments[index].endDeriv = position;
             break;
     }
 
@@ -102,16 +101,22 @@ const onPositionChange = (index: number, position: [number, number, number], typ
         position={startPosition.toArray()}
         onPositionDrag={position => onPositionDrag(i, position, "vertex")}
         onPositionChange={position => onPositionChange(i, position, "vertex")}
+        {meshLineScaleFac}
+        {groupMatrix}
     />
     <CurveHandle
         position={startDerivPosition.toArray()}
         onPositionDrag={position => onPositionDrag(i, position, "startDeriv")}
         onPositionChange={position => onPositionChange(i, position, "startDeriv")}
+        {meshLineScaleFac}
+        {groupMatrix}
     />
     <CurveHandle
         position={endDerivPosition.toArray()}
         onPositionDrag={position => onPositionDrag(i, position, "endDeriv")}
         onPositionChange={position => onPositionChange(i, position, "endDeriv")}
+        {meshLineScaleFac}
+        {groupMatrix}
     />
     
     <T.Mesh>
@@ -148,5 +153,7 @@ const onPositionChange = (index: number, position: [number, number, number], typ
         position={finalStartPosition.toArray()}
         onPositionDrag={position => onPositionDrag(curveSegments.length, position, "vertex")}
         onPositionChange={position => onPositionChange(curveSegments.length, position, "vertex")}
+        {meshLineScaleFac}
+        {groupMatrix}
     />
 {/if}

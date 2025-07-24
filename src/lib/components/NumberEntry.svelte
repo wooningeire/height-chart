@@ -49,14 +49,13 @@ let {
 
 
 <style lang="scss">
+@use "$lib/styles/raised.scss" as raised;
+
 number-entry-container {
     display: flex;
-    gap: 0.5rem;
-    
-    border: 0.0625rem solid oklch(0.5 0.01 270);
-    box-shadow: 0 0.0625rem 0.25rem oklch(0 0 0 / 0.3333333);
+    gap: raised.$raised-padding;
 
-    border-radius: 0.5rem;
+    @include raised.raised;
 }
 
 number-entry-input-container {
@@ -67,9 +66,9 @@ number-entry-input {
     grid-area: 1/1;
 
     display: block;
-    padding: 0.5rem;
+    padding: raised.$raised-padding;
 
-    border-radius: 0.5rem 0 0 0.5rem;
+    border-radius: raised.$raised-padding 0 0 raised.$raised-padding;
 
     text-align: right;
 
@@ -80,6 +79,6 @@ number-entry-input {
 }
 
 label {
-    padding: 0.5rem 0.5rem 0.5rem 0;
+    padding: raised.$raised-padding raised.$raised-padding raised.$raised-padding 0;
 }
 </style>
