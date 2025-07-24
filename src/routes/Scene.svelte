@@ -1,4 +1,5 @@
 <script lang="ts">
+import {setContext} from "svelte";
 import {T} from "@threlte/core";
 import {ContactShadows, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
 import type { SvelteMap } from "svelte/reactivity";
@@ -6,6 +7,8 @@ import type { Character } from "$lib/types/Character";
 import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
 import {Texture, CubicBezierCurve3} from "three";
+import {sceneState} from "$/routes/SceneState.svelte";
+    import type { Bezier } from "$/lib/types/Bezier.svelte";
 
 let {
     characters,
@@ -15,7 +18,7 @@ let {
 }: {
     characters: SvelteMap<string, Character>,
     addedCharacter: Character | null,
-    onAddedCharacterReferenceCurveChange?: (referenceCurve: CubicBezierCurve3[]) => void,
+    onAddedCharacterReferenceCurveChange?: (referenceCurve: Bezier[]) => void,
     onAddedCharacterTextureChange?: (texture: Texture) => void,
 } = $props();
 
@@ -50,10 +53,12 @@ interactivity();
     makeDefault
     position={[2, 2, 3]}
     fov={30}
+    bind:ref={() => undefined, camera => sceneState.camera = camera!}
 >
     <OrbitControls 
         enableDamping
         dampingFactor={0.05}
+        enabled={sceneState.cameraControlsEnabled}
     />
 </T.PerspectiveCamera>
 

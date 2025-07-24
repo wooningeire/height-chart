@@ -7,6 +7,7 @@ import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap} from "three";
 import { type Character } from "$lib/types/Character";
 import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
+    import { Bezier } from "$/lib/types/Bezier.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -31,12 +32,12 @@ const handleImageUpload = (event: Event) => {
             imageUrl: reader.result as string,
             referenceCurve: new CompositeCurve({
                 segments: [
-                    new CubicBezierCurve3(
-                        new Vector3(0.125, 0.125, 0),
-                        new Vector3(0.35, 0.5, 0),
-                        new Vector3(0.75, 0.35, 0),
-                        new Vector3(0.875, 0.875, 0),
-                    ),
+                    new Bezier({
+                        start: new Vector3(0.125, 0.125, 0),
+                        end: new Vector3(0.875, 0.875, 0),
+                        startDeriv: new Vector3(0.35, 0.5, 0),
+                        endDeriv: new Vector3(0.75, 0.35, 0),
+                    }),
                 ],
                 targetLength: 1,
             }),
@@ -100,10 +101,6 @@ const id = $props.id();
         <Scene
             {characters}
             {addedCharacter}
-            onAddedCharacterReferenceCurveChange={value => {
-                if (addedCharacter === null) return;
-                addedCharacter.referenceCurve.segments = value;
-            }}
             onAddedCharacterTextureChange={value => addedCharacterTexture = value}
         />
     </Canvas>

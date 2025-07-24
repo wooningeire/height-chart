@@ -1,17 +1,17 @@
-import type { CubicBezierCurve3 } from "three";
+import type { Bezier } from "./Bezier.svelte";
 
 const N_POINTS = 32;
 
 export class CompositeCurve {
-    segments = $state<CubicBezierCurve3[]>()!;
+    segments = $state<Bezier[]>()!;
     targetLength = $state<number>()!;
 
-    points = $derived(this.segments.flatMap(curve => curve.getPoints(N_POINTS)));
+    points = $derived(this.segments.flatMap(curve => curve.ref.getPoints(N_POINTS)));
     arcLength = $derived.by(() => {
         let length = 0;
 
         for (const segment of this.segments) {
-            length += segment.getLength();
+            length += segment.arcLength;
         }
 
         return length;
@@ -23,7 +23,7 @@ export class CompositeCurve {
         segments,
         targetLength,
     }: {
-        segments: CubicBezierCurve3[],
+        segments: Bezier[],
         targetLength: number,
     }) {
         this.segments = segments;

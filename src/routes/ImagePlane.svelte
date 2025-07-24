@@ -1,15 +1,5 @@
-<script lang="ts" module>
-export type ImagePlaneClickEvent = {
-    localX: number,
-    localY: number,
-    pixelX: number,
-    pixelY: number,
-};
-</script>
-
 <script lang="ts">
 import {T} from "@threlte/core";
-import {type IntersectionEvent} from "@threlte/extras";
 import { untrack } from "svelte";
 import * as THREE from "three";
 
@@ -17,19 +7,18 @@ let {
     url,
     position = [0, 0, 0],
     scale = [1, 1, 1],
-    onClick,
     onBottomLeftLocalCoordsChange,
     onTextureChange,
+    meshRef = $bindable(),
 }: {
     url: string,
     position?: [number, number, number],
     scale?: [number, number, number],
-    onClick?: (coords: ImagePlaneClickEvent) => void,
     onBottomLeftLocalCoordsChange?: (coords: {x: number, y: number}) => void,
     onTextureChange?: (texture: THREE.Texture) => void,
+    meshRef?: THREE.Mesh,
 } = $props();
 
-let meshRef = $state<THREE.Mesh>();
 let texture = $state<THREE.Texture | null>(null);
 
 let aspectRatio = $derived.by(() => {
@@ -66,24 +55,6 @@ $effect(() => {
 });
 
 const bottomLeftLocalCoords = $derived(new THREE.Vector3(-aspectRatio / 2, -0.5));
-const inverseMeshMatrix = $derived(meshRef?.matrixWorld.clone().invert() ?? null);
-
-
-const handleClick = (event: IntersectionEvent<PointerEvent>) => {
-    if (!inverseMeshMatrix || !texture) return;
-
-    const clickLocalCoords = event.point.clone().applyMatrix4(inverseMeshMatrix);
-
-    const localX = clickLocalCoords.x - bottomLeftLocalCoords.x;
-    const localY = clickLocalCoords.y - bottomLeftLocalCoords.y;
-
-    onClick?.({
-        localX,
-        localY,
-        pixelX: localX * texture.image.height,
-        pixelY: localY * texture.image.height,
-    });
-};
 
 $effect(() => {
     const point = {
@@ -102,7 +73,6 @@ $effect(() => {
         {scale}
         castShadow
         receiveShadow
-        onclick={handleClick}
     >
         <T.PlaneGeometry args={[aspectRatio, 1]} />
         <T.MeshStandardMaterial
