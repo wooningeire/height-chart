@@ -169,7 +169,7 @@ main {
 character-overlay {
     position: fixed;
     padding: 1rem;
-    max-width: 16rem;
+    width: 16rem;
 
     background: oklch(1 0 0 / 0.5);
     backdrop-filter: blur(0.5rem);
@@ -195,6 +195,10 @@ added-character-image {
 
 img {
     width: 100%;
+    max-height: 10rem;
+    object-fit: contain;
+
+    filter: drop-shadow(0 0.0625rem 0.0625rem oklch(0 0 0 / 0.125));
 }
 
 .character-list {
