@@ -92,14 +92,14 @@ export class DraggerAgainstZPlane {
     readonly onPointerUp = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
         if (event.button !== 0) return;
 
-        if (!this.dragging && this.pointerDownPosition) {
+        if (!this.dragging && this.pointerDownPosition !== null) {
             this.onSelect?.();
         }
         this.pointerDownPosition = null;
+        this.sceneState.cameraControlsEnabled = true;
 
         if (!this.dragging) return;
 
-        this.sceneState.cameraControlsEnabled = true;
         this.dragging = false;
 
         this.onPositionChange?.(this.#localPosition(currentPosition, groupMatrix, event));

@@ -11,6 +11,12 @@ import CharacterAddForm from "./CharacterAddForm.svelte";
 
 const characters = $state(new SvelteMap<string, Character>());
 
+const sortedCharacters = $derived(
+    characters.entries()
+        .toArray()
+        .sort((a, b) => a[1].referenceCurve.targetScaleFac - b[1].referenceCurve.targetScaleFac)
+);
+
 let addedCharacter = $state<Character | null>(null);
 </script>
 
@@ -28,19 +34,19 @@ let addedCharacter = $state<Character | null>(null);
         />
         
         {#if characters.size > 0}
-            <div class="character-list">
+            <character-list>
                 <h3>Characters</h3>
-                {#each characters as [id, character] (id)}
+                {#each sortedCharacters as [id, character] (id)}
                     <CharacterListitem {character} />
                 {/each}
-            </div>
+            </character-list>
         {/if}
     </character-overlay>
     
     <scene-container>
         <Canvas shadows={PCFSoftShadowMap}>
             <Scene
-                {characters}
+                characters={sortedCharacters}
                 {addedCharacter}
             />
         </Canvas>
@@ -81,13 +87,12 @@ img {
     filter: drop-shadow(0 0.0625rem 0.0625rem oklch(0 0 0 / 0.125));
 }
 
-.character-list {
+character-list {
     margin-top: 20px;
-    
-    h3 {
-        margin: 0 0 10px 0;
-        font-size: 16px;
-    }
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 </style>

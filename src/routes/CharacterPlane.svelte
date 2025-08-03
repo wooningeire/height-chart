@@ -1,11 +1,11 @@
 <script lang="ts">
 import type { Character } from "$/lib/types/Character.svelte";
 import { T } from "@threlte/core";
-import CharacterReference from "./CharacterReference.svelte";
 import {Group, Matrix4, Mesh, Texture} from "three";
 import CurveEditor from "./CurveEditor.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
     import { Spring } from "svelte/motion";
+    import ImagePlane from "./ImagePlane.svelte";
 
 let {
     character,
@@ -44,8 +44,9 @@ let innerGroupMatrix = $derived.by(() => {
         position={[bottomLeftLocalCoords.x, 0, 0]}
         bind:ref={() => undefined, group => innerGroupRef = group!}
     >
-        <CharacterReference
-            {character}
+        <ImagePlane
+            texture={character.texture}
+            position={[character.texture.width / character.texture.height / 2, 0.5, 0]}
         />
 
         {#if showCurve}

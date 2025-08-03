@@ -1,19 +1,22 @@
 <script lang="ts">
     import type { Character } from "$/lib/types/Character.svelte";
+    import Button from "@/Button.svelte";
 
 let {
     character,
+    onClick,
 }: {
     character: Character,
+    onClick?: () => void,
 } = $props();
 </script>
 
 
-<character-list-item>
+<Button {onClick}>
     <character-name>{character.name}</character-name>
 
     <img src={character.imageUrl} alt={character.name} />
-</character-list-item>
+</Button>
 
 <style lang="scss">
 character-list-item {
@@ -28,7 +31,7 @@ img {
 
     border-radius: 0.5rem;
 
-    filter: drop-shadow(0 0.0625rem 0.125rem oklch(0 0 0 / 0.25));
+    filter: drop-shadow(0 0.0625rem 0.25rem oklch(0 0 0 / 0.125));
 }
 
 character-name {

@@ -9,6 +9,7 @@ let {
     position,
     onPositionDrag,
     onPositionChange,
+    onExtrude,
     onSelect,
     meshLineScaleFac = 1,
     groupMatrix,
@@ -16,6 +17,7 @@ let {
     position: [number, number, number],
     onPositionDrag?: (position: Vector3) => void,
     onPositionChange?: (position: Vector3) => void,
+    onExtrude?: () => void,
     onSelect?: () => void,
     meshLineScaleFac?: number,
     groupMatrix: Matrix4,
@@ -25,10 +27,27 @@ const dragger = new DraggerAgainstZPlane({
     sceneState,
     onPositionDrag,
     onPositionChange,
-    onSelect,
+    onSelect: () => {
+        selected = true;
+        onSelect?.();
+    },
 });
 
 const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp} = dragger;
+
+let selected = $state(false);
+
+const color = $derived.by(() => {
+    if (selected) {
+        return "#88a";
+    }
+
+    if (dragger.hovering) {
+        return "#f00";
+    }
+
+    return "#fff";
+});
 </script>
 
 <svelte:window
@@ -49,5 +68,5 @@ const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp
     onpointerdown={onPointerDown}
 >
     <T.BoxGeometry args={[0.025, 0.025, 0.025]} />
-    <T.MeshToonMaterial emissive={dragger.hovering ? "#f00" : "#fff"} />
+    <T.MeshToonMaterial emissive={color} />
 </T.Mesh>

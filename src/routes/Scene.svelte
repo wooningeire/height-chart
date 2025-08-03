@@ -4,8 +4,7 @@ import {T} from "@threlte/core";
 import {ContactShadows, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
 import type { SvelteMap } from "svelte/reactivity";
 import type { Character } from "$/lib/types/Character.svelte";
-import CharacterReference from "./CharacterReference.svelte";
-import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
+import CharacterPlane from "./CharacterPlane.svelte";
 import {Texture, CubicBezierCurve3, PerspectiveCamera, Vector3} from "three";
 import {sceneState} from "$/lib/types/SceneState.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
@@ -17,21 +16,13 @@ let {
     addedCharacter,
     onAddedCharacterReferenceCurveChange,
 }: {
-    characters: SvelteMap<string, Character>,
+    characters: [string, Character][],
     addedCharacter: Character | null,
     onAddedCharacterReferenceCurveChange?: (referenceCurve: Bezier[]) => void,
 } = $props();
 
 
 interactivity();
-
-
-
-const sortedCharacters = $derived(
-    characters.entries()
-        .toArray()
-        .sort((a, b) => a[1].referenceCurve.targetScaleFac - b[1].referenceCurve.targetScaleFac)
-);
 
 
 let controls: OrbitControlsType | null = $state(null);
@@ -118,9 +109,9 @@ $effect(() => {
 
 
 <T.Group>
-    {#each sortedCharacters as [id, character], i (id)}
+    {#each characters as [id, character], i (id)}
         <T.Group position={[0, 0, -(i + 1)]}>
-            <CharacterSizeEditor
+            <CharacterPlane
                 {character}
             />
         </T.Group>
@@ -129,16 +120,9 @@ $effect(() => {
 
 
 {#if addedCharacter !== null}
-    <CharacterSizeEditor
+    <CharacterPlane
         character={addedCharacter}
         onReferenceCurveChange={onAddedCharacterReferenceCurveChange}
         showCurve
     />
 {/if}
-
-<T.Mesh position={[0, 0.5, -5]} castShadow receiveShadow>
-    <T.BoxGeometry args={[1, 1, 1]} />
-    <T.MeshStandardMaterial
-        color="#007bff"
-    />
-</T.Mesh>
