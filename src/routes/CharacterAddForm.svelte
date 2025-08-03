@@ -86,12 +86,14 @@ const handleImageUpload = async () => {
                 ],
                 targetLength: 1,
             }),
+            offsetPos: new Vector3(texture.width / texture.height / 2, 0, 0),
         });
 
-        onCreate?.(addedCharacter)
+        onCreate?.(addedCharacter);
     } else {
         addedCharacter.imageUrl = dataUrl;
         addedCharacter.texture = texture;
+        addedCharacter.offsetPos = new Vector3(texture.width / texture.height / 2, 0, 0);
     }
 };
 

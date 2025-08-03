@@ -99,7 +99,11 @@ $effect(() => {
     receiveShadow
 >
     <T.PlaneGeometry args={[20, 20]} />
-    <T.MeshPhysicalMaterial color="#fff" />
+    <T.MeshPhysicalMaterial
+        color="#000"
+        opacity={0.25}
+        transparent
+    />
 </T.Mesh>
 
 <T.GridHelper
@@ -123,6 +127,6 @@ $effect(() => {
     <CharacterPlane
         character={addedCharacter}
         onReferenceCurveChange={onAddedCharacterReferenceCurveChange}
-        showCurve
+        showEditor
     />
 {/if}

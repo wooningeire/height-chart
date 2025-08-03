@@ -82,8 +82,11 @@ export class DraggerAgainstZPlane {
     };
 
     readonly onPointerMove = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
-        if (!this.pointerDownPosition) return;
-        if (!this.dragging && Math.hypot(event.clientX - this.pointerDownPosition.x, event.clientY - this.pointerDownPosition.y) < DRAG_THRESHOLD) return;
+        if (this.pointerDownPosition === null) return;
+
+        const diffX = event.clientX - this.pointerDownPosition.x;
+        const diffY = event.clientY - this.pointerDownPosition.y;
+        if (!this.dragging && Math.hypot(diffX, diffY) < DRAG_THRESHOLD) return;
 
         this.dragging = true;
         this.onPositionDrag?.(this.#localPosition(currentPosition, groupMatrix, event));

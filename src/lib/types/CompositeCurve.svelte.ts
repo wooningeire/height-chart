@@ -17,7 +17,8 @@ export class CompositeCurve {
         return length;
     });
 
-    targetScaleFac = $derived(this.targetLength / this.arcLength);
+    targetScaleFacRaw = $derived(this.targetLength / this.arcLength);
+    targetScaleFac = $derived(isFinite(this.targetScaleFacRaw) ? this.targetScaleFacRaw : 1);
 
     constructor({
         segments,
