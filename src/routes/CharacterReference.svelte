@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Character } from "$lib/types/Character";
+import type { Character } from "$/lib/types/Character.svelte";
 import ImagePlane from "./ImagePlane.svelte";
 import {Mesh, Vector3} from "three";
 

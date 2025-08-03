@@ -77,11 +77,11 @@ const onPositionChange = (index: number, position: Vector3, type: DragType) => {
     }
     {@const startDerivPosition = currentDrag !== null && currentDrag.type === "startDeriv" && currentDrag.index === i
         ? currentDrag.position
-        : curveSegment.startDeriv
+        : curveSegment.startDeriv ?? startPosition
     }
     {@const endDerivPosition = currentDrag !== null && currentDrag.type === "endDeriv" && currentDrag.index === i
         ? currentDrag.position
-        : curveSegment.endDeriv
+        : curveSegment.endDeriv ?? endPosition
     }
 
     <T.Mesh>
@@ -104,42 +104,48 @@ const onPositionChange = (index: number, position: Vector3, type: DragType) => {
         {meshLineScaleFac}
         {groupMatrix}
     />
-    <CurveHandle
-        position={startDerivPosition.toArray()}
-        onPositionDrag={position => onPositionDrag(i, position, "startDeriv")}
-        onPositionChange={position => onPositionChange(i, position, "startDeriv")}
-        {meshLineScaleFac}
-        {groupMatrix}
-    />
-    <CurveHandle
-        position={endDerivPosition.toArray()}
-        onPositionDrag={position => onPositionDrag(i, position, "endDeriv")}
-        onPositionChange={position => onPositionChange(i, position, "endDeriv")}
-        {meshLineScaleFac}
-        {groupMatrix}
-    />
-    
-    <T.Mesh>
-        <MeshLineGeometry points={[startPosition, startDerivPosition]} />
-        <MeshLineMaterial
-            color="#fff"
-            width={0.025 * meshLineScaleFac}
-            dashArray={1/32}
-            dashRatio={0.5}
-            transparent
-        />
-    </T.Mesh>
 
-    <T.Mesh>
-        <MeshLineGeometry points={[endPosition, endDerivPosition]} />
-        <MeshLineMaterial
-            color="#fff"
-            width={0.025 * meshLineScaleFac}
-            dashArray={1/32}
-            dashRatio={0.5}
-            transparent
+    {#if curveSegment.startDeriv !== null}
+        <CurveHandle
+            position={startDerivPosition.toArray()}
+            onPositionDrag={position => onPositionDrag(i, position, "startDeriv")}
+            onPositionChange={position => onPositionChange(i, position, "startDeriv")}
+            {meshLineScaleFac}
+            {groupMatrix}
         />
-    </T.Mesh>
+
+        <T.Mesh>
+            <MeshLineGeometry points={[startPosition, startDerivPosition]} />
+            <MeshLineMaterial
+                color="#fff"
+                width={0.025 * meshLineScaleFac}
+                dashArray={1/32}
+                dashRatio={0.5}
+                transparent
+            />
+        </T.Mesh>
+    {/if}
+
+    {#if curveSegment.endDeriv !== null}
+        <CurveHandle
+            position={endDerivPosition.toArray()}
+            onPositionDrag={position => onPositionDrag(i, position, "endDeriv")}
+            onPositionChange={position => onPositionChange(i, position, "endDeriv")}
+            {meshLineScaleFac}
+            {groupMatrix}
+        />
+
+        <T.Mesh>
+            <MeshLineGeometry points={[endPosition, endDerivPosition]} />
+            <MeshLineMaterial
+                color="#fff"
+                width={0.025 * meshLineScaleFac}
+                dashArray={1/32}
+                dashRatio={0.5}
+                transparent
+            />
+        </T.Mesh>
+    {/if}
 {/each}
 
 

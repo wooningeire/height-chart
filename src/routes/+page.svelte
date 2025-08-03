@@ -4,12 +4,13 @@ import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
 import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap, TextureLoader, SRGBColorSpace} from "three";
-import { type Character } from "$lib/types/Character";
+import { Character } from "$/lib/types/Character.svelte";
 import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 import { Bezier } from "$/lib/types/Bezier.svelte";
     import Button from "@/Button.svelte";
     import Separator from "@/Separator.svelte";
+    import { sub } from "three/tsl";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -66,7 +67,7 @@ const handleImageUpload = async () => {
     const {dataUrl, texture} = await loadTexture(file);
 
     if (addedCharacter === null) {
-        addedCharacter = {
+        addedCharacter = new Character({
             id: file.name,
             name: file.name,
             imageUrl: dataUrl,
@@ -76,13 +77,11 @@ const handleImageUpload = async () => {
                     new Bezier({
                         start: new Vector3(0.125, 0.125, 0),
                         end: new Vector3(0.875, 0.875, 0),
-                        startDeriv: new Vector3(0.35, 0.5, 0),
-                        endDeriv: new Vector3(0.75, 0.35, 0),
                     }),
                 ],
                 targetLength: 1,
             }),
-        };
+        });
     } else {
         addedCharacter.id = file.name;
         addedCharacter.name = file.name;
@@ -92,6 +91,12 @@ const handleImageUpload = async () => {
 };
 
 const id = $props.id();
+
+const submitAddedCharacter = () => {
+    if (addedCharacter === null) return;
+
+    characters.set(addedCharacter.id, new Character(addedCharacter));
+};
 
 </script>
 
@@ -126,6 +131,14 @@ const id = $props.id();
                         }}
                     />
                 </div>
+
+                <Separator />
+
+                <Separator />
+
+                <Button onClick={submitAddedCharacter}>
+                    Submit
+                </Button>
             {/if}
         </added-character-details>
         

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Character } from "$lib/types/Character";
+import type { Character } from "$/lib/types/Character.svelte";
 import { T } from "@threlte/core";
 import CharacterReference from "./CharacterReference.svelte";
 import {Group, Matrix4, Mesh, Texture} from "three";
@@ -10,9 +10,11 @@ import type { Bezier } from "$/lib/types/Bezier.svelte";
 let {
     character,
     onReferenceCurveChange,
+    showCurve = false,
 }: {
     character: Character,
     onReferenceCurveChange?: (referenceCurve: Bezier[]) => void,
+    showCurve?: boolean,
 } = $props();
 
 let innerGroupRef = $state<Group | null>(null);
@@ -46,11 +48,13 @@ let innerGroupMatrix = $derived.by(() => {
             {character}
         />
 
-        <CurveEditor
-            curve={character.referenceCurve.segments}
-            onCurveChange={onReferenceCurveChange}
-            meshLineScaleFac={character.referenceCurve.targetScaleFac}
-            groupMatrix={innerGroupMatrix}
-        />
+        {#if showCurve}
+            <CurveEditor
+                curve={character.referenceCurve.segments}
+                onCurveChange={onReferenceCurveChange}
+                meshLineScaleFac={character.referenceCurve.targetScaleFac}
+                groupMatrix={innerGroupMatrix}
+            />
+        {/if}
     </T.Group>
 </T.Group>

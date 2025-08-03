@@ -3,7 +3,7 @@ import {setContext, untrack} from "svelte";
 import {T} from "@threlte/core";
 import {ContactShadows, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
 import type { SvelteMap } from "svelte/reactivity";
-import type { Character } from "$lib/types/Character";
+import type { Character } from "$/lib/types/Character.svelte";
 import CharacterReference from "./CharacterReference.svelte";
 import CharacterSizeEditor from "./CharacterSizeEditor.svelte";
 import {Texture, CubicBezierCurve3, PerspectiveCamera, Vector3} from "three";
@@ -111,7 +111,7 @@ $effect(() => {
 
 <T.Group>
     {#each characters as [id, character] (id)}
-        <CharacterReference {character} />
+        <CharacterSizeEditor {character} />
     {/each}
 </T.Group>
 
@@ -120,6 +120,7 @@ $effect(() => {
     <CharacterSizeEditor
         character={addedCharacter}
         onReferenceCurveChange={onAddedCharacterReferenceCurveChange}
+        showCurve
     />
 {/if}
 

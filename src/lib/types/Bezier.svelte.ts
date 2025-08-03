@@ -6,13 +6,13 @@ import { CubicBezierCurve3, type Vector3 } from "three";
 export class Bezier {
     start = $state<Vector3>()!;
     end = $state<Vector3>()!;
-    startDeriv = $state<Vector3>()!;
-    endDeriv = $state<Vector3>()!;
+    startDeriv = $state<Vector3 | null>(null);
+    endDeriv = $state<Vector3 | null>(null);
 
     ref = $derived(new CubicBezierCurve3(
         this.start,
-        this.startDeriv,
-        this.endDeriv,
+        this.startDeriv ?? this.start,
+        this.endDeriv ?? this.end,
         this.end,
     ));
 
@@ -21,13 +21,13 @@ export class Bezier {
     constructor({
         start,
         end,
-        startDeriv,
-        endDeriv,
+        startDeriv = null,
+        endDeriv = null,
     }: {
         start: Vector3,
         end: Vector3,
-        startDeriv: Vector3,
-        endDeriv: Vector3,
+        startDeriv?: Vector3 | null,
+        endDeriv?: Vector3 | null,
     }) {
         this.start = start;
         this.end = end;
