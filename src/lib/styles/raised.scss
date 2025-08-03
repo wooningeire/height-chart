@@ -1,5 +1,6 @@
+$padding: 0.5rem;
 
-@mixin raised {
+@mixin container {
     border: 0.0625rem solid oklch(0 0 0 / 0.25);
     box-shadow: 0 0.0625rem 0.25rem oklch(0 0 0 / 0.0625);
 
@@ -8,4 +9,14 @@
     border-radius: 0.5rem;
 }
 
-$raised-padding: 0.5rem;
+@mixin input {
+    grid-area: 1/1;
+
+    display: block;
+    padding: $padding;
+
+    &.invalid {
+        outline: 1px solid oklch(62.828% 0.20996 13.579);
+        outline-offset: 0.5rem;
+    }
+}

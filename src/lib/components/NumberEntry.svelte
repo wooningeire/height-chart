@@ -1,5 +1,6 @@
 <script lang="ts">
 import {TextInput} from "@vaie/hui";
+    import EntryLabel from "./EntryLabel.svelte";
 
 let {
     value,
@@ -22,7 +23,7 @@ let {
 
 
 <number-entry-total-container>
-    <label for={id}>{label}</label>
+    <EntryLabel {id}>{label}</EntryLabel>
 
     <number-entry-container>
         <TextInput
@@ -61,21 +62,13 @@ let {
 number-entry-total-container {
     display: flex;
     flex-direction: column;
-
-    > label {
-        margin-bottom: -0.25rem;
-
-        font-size: 0.8rem;
-        opacity: 0.75;
-        line-height: 1;
-    }
 }
 
 number-entry-container {
-    display: flex;
-    gap: raised.$raised-padding;
+    @include raised.container;
 
-    @include raised.raised;
+    display: flex;
+    gap: raised.$padding;
 }
 
 number-entry-input-container {
@@ -83,22 +76,14 @@ number-entry-input-container {
 }
 
 number-entry-input {
-    grid-area: 1/1;
+    @include raised.input;
 
-    display: block;
-    padding: raised.$raised-padding;
-
-    border-radius: raised.$raised-padding 0 0 raised.$raised-padding;
+    border-radius: raised.$padding 0 0 raised.$padding;
 
     text-align: right;
-
-    &.invalid {
-        outline: 1px solid oklch(62.828% 0.20996 13.579);
-        outline-offset: 0.5rem;
-    }
 }
 
 label {
-    padding: raised.$raised-padding raised.$raised-padding raised.$raised-padding 0;
+    padding: raised.$padding raised.$padding raised.$padding 0;
 }
 </style>

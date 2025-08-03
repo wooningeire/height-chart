@@ -3,15 +3,10 @@ import "./index.scss";
 import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
-import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap, TextureLoader, SRGBColorSpace} from "three";
+import {PCFSoftShadowMap} from "three";
 import { Character } from "$/lib/types/Character.svelte";
-import NumberEntry from "@/NumberEntry.svelte";
-import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
-    import Button from "@/Button.svelte";
-    import Separator from "@/Separator.svelte";
-    import { sub } from "three/tsl";
-    import CharacterAddForm from "./CharacterAddForm.svelte";
+import CharacterAddForm from "./CharacterAddForm.svelte";
+    import CharacterListitem from "./CharacterListitem.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -26,6 +21,8 @@ let addedCharacter = $state<Character | null>(null);
             onCancel={() => addedCharacter = null}
             onSubmit={character => {
                 addedCharacter = null;
+                
+                character.id = crypto.randomUUID();
                 characters.set(character.id, character);
             }}
         />
@@ -34,22 +31,20 @@ let addedCharacter = $state<Character | null>(null);
             <div class="character-list">
                 <h3>Characters</h3>
                 {#each characters as [id, character] (id)}
-                    <div class="character">
-                        <img src={character.imageUrl} alt={character.name} />
-                        <span>{character.name}</span>
-                        <!-- <button onclick={() => removeImage(id)}>Remove</button> -->
-                    </div>
+                    <CharacterListitem {character} />
                 {/each}
             </div>
         {/if}
     </character-overlay>
     
-    <Canvas shadows={PCFSoftShadowMap}>
-        <Scene
-            {characters}
-            {addedCharacter}
-        />
-    </Canvas>
+    <scene-container>
+        <Canvas shadows={PCFSoftShadowMap}>
+            <Scene
+                {characters}
+                {addedCharacter}
+            />
+        </Canvas>
+    </scene-container>
 </main>
 
 <style lang="scss">
@@ -57,6 +52,8 @@ main {
     width: 100vw;
     height: 100vh;
     position: relative;
+    display: grid;
+    place-items: stretch;
 }
 
 character-overlay {
@@ -70,9 +67,14 @@ character-overlay {
     z-index: 1;
 }
 
+scene-container {
+    grid-area: 1/1;
+
+    user-select: none;
+}
+
 
 img {
-    width: 100%;
     max-height: 10rem;
     object-fit: contain;
 
@@ -88,42 +90,4 @@ img {
     }
 }
 
-.character {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    
-    img {
-        width: 100%;
-        max-height: 40px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-    
-    span {
-        flex: 1;
-        font-size: 14px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    button {
-        padding: 4px 8px;
-        background: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        
-        &:hover {
-            background: #c82333;
-        }
-    }
-}
 </style>

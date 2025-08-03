@@ -7,6 +7,7 @@ import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 import { Bezier } from "$/lib/types/Bezier.svelte";
 import { sub } from "three/tsl";
+    import TextEntry from "@/TextEntry.svelte";
 
 let {
     onCreate,
@@ -73,7 +74,6 @@ const handleImageUpload = async () => {
 
     if (addedCharacter === null) {
         addedCharacter = new Character({
-            id: file.name,
             name: file.name,
             imageUrl: dataUrl,
             texture,
@@ -90,7 +90,6 @@ const handleImageUpload = async () => {
 
         onCreate?.(addedCharacter)
     } else {
-        addedCharacter.id = file.name;
         addedCharacter.imageUrl = dataUrl;
         addedCharacter.texture = texture;
     }
@@ -134,6 +133,17 @@ const submit = () => {
         </added-character-image>
 
         <Separator />
+
+        <div>
+            <TextEntry
+                value={addedCharacter.name}
+                label="Character name"
+                onValueChange={value => {
+                    if (addedCharacter === null) return;
+                    addedCharacter.name = value;
+                }}
+            />
+        </div>
 
         <div>
             <NumberEntry

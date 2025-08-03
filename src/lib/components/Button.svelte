@@ -18,9 +18,9 @@ let {
 @use "$lib/styles/raised.scss" as raised;
 
 button {
-    @include raised.raised;
+    @include raised.container;
 
-    padding: raised.$raised-padding;
+    padding: raised.$padding;
 
     transition:
         background 0.1s ease-in-out,

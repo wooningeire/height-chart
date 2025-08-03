@@ -2,20 +2,20 @@ import type { Texture } from "three";
 import type { CompositeCurve } from "./CompositeCurve.svelte";
 
 export class Character {
-    id: string = $state()!;
+    id: string | null = $state(null);
     name: string = $state()!;
     imageUrl: string = $state()!;
     texture: Texture = $state()!;
     referenceCurve: CompositeCurve = $state()!;
 
     constructor({
-        id,
+        id = null,
         name,
         imageUrl,
         texture,
         referenceCurve,
     }: {
-        id: string,
+        id?: string | null,
         name: string,
         imageUrl: string,
         texture: Texture,
