@@ -98,9 +98,14 @@ const handleImageUpload = async () => {
 
 const id = $props.id();
 
-const submitAddedCharacter = () => {
+const cancel = () => {
+    onCancel?.();
+    addedCharacter = null;
+};
+
+const submit = () => {
     if (addedCharacter === null) return;
-    
+
     onSubmit?.(addedCharacter);
     addedCharacter = null;
 };
@@ -117,6 +122,10 @@ const submitAddedCharacter = () => {
     </Button>
 
     {#if addedCharacter !== null}
+        <Button onClick={cancel}>
+            Cancel
+        </Button>
+
         <added-character-image>
             <img
                 src={addedCharacter.imageUrl}
@@ -141,7 +150,7 @@ const submitAddedCharacter = () => {
 
         <Separator />
 
-        <Button onClick={submitAddedCharacter}>
+        <Button onClick={submit}>
             Submit
         </Button>
     {/if}
