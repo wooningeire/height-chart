@@ -26,6 +26,14 @@ let {
 interactivity();
 
 
+
+const sortedCharacters = $derived(
+    characters.entries()
+        .toArray()
+        .sort((a, b) => a[1].referenceCurve.targetScaleFac - b[1].referenceCurve.targetScaleFac)
+);
+
+
 let controls: OrbitControlsType | null = $state(null);
 let oldScale: number | null = null;
 $effect(() => {
@@ -110,8 +118,12 @@ $effect(() => {
 
 
 <T.Group>
-    {#each characters as [id, character] (id)}
-        <CharacterSizeEditor {character} />
+    {#each sortedCharacters as [id, character], i (id)}
+        <T.Group position={[0, 0, -(i + 1)]}>
+            <CharacterSizeEditor
+                {character}
+            />
+        </T.Group>
     {/each}
 </T.Group>
 

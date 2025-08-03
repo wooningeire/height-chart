@@ -6,7 +6,6 @@ import {Group, Matrix4, Mesh, Texture} from "three";
 import CurveEditor from "./CurveEditor.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
     import { Spring } from "svelte/motion";
-    import { untrack } from "svelte";
 
 let {
     character,
