@@ -7,6 +7,7 @@ import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 import { Bezier } from "$/lib/types/Bezier.svelte";
 import TextEntry from "@/TextEntry.svelte";
+    import { createTextureFromFile, createTextureFromUrl } from "$/lib/createTexture";
 
     
 let {
@@ -20,45 +21,6 @@ let {
 } = $props();
 
 let addedCharacter = $state.raw<Character | null>(null);
-
-
-const readAsDataUrl = (file: File) => {
-    return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-            resolve(reader.result as string);
-        });
-        reader.addEventListener("error", reject);
-        reader.readAsDataURL(file);
-    });
-};
-
-const createTextureFromUrl = (url: string) => {
-    return new Promise<Texture>((resolve, reject) => {
-        const loader = new TextureLoader();
-
-        loader.load(
-            url,
-            loadedTexture => {
-                if (loadedTexture === null) return;
-
-                loadedTexture.colorSpace = SRGBColorSpace;
-                loadedTexture.premultiplyAlpha = false;
-                resolve(loadedTexture);
-            },
-            undefined,
-            error => {
-                reject(error);
-            },
-        );
-    });
-};
-
-const createTextureFromFile = async (file: File) => {
-    const url = await readAsDataUrl(file);
-    const texture = await createTextureFromUrl(url);
-    return {url, texture};
-};
 
 
 let fileInputEl = $state<HTMLInputElement>()!;
@@ -132,8 +94,9 @@ const submit = async () => {
     });
 
     if (!response.ok) return;
-    const { imageUrl } = await response.json();
+    const { id, imageUrl } = await response.json();
 
+    addedCharacter.id = id.toString();
     addedCharacter.imageUrl = imageUrl;
     addedCharacter.texture = await createTextureFromUrl(imageUrl);
 

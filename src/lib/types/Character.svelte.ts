@@ -6,7 +6,7 @@ export class Character {
     name: string = $state()!;
     imageUrl: string = $state()!;
     file: File | null = $state(null);
-    texture: Texture = $state()!;
+    texture: Texture | null = $state(null);
 
     referenceCurve: CompositeCurve = $state()!;
     offsetPos: Vector3 = $state()!;
@@ -16,7 +16,7 @@ export class Character {
         name,
         imageUrl,
         file = null,
-        texture,
+        texture = null,
         referenceCurve,
         offsetPos = new Vector3(),
     }: {
@@ -24,7 +24,7 @@ export class Character {
         name: string,
         imageUrl: string,
         file?: File | null,
-        texture: Texture,
+        texture?: Texture | null,
         referenceCurve: CompositeCurve,
         offsetPos?: Vector3,
     }) {

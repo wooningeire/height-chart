@@ -50,10 +50,12 @@ let innerGroupMatrix = $derived.by(() => {
         position={[-offsetX.current, -offsetY.current, -offsetZ.current]}
         bind:ref={() => undefined, group => innerGroupRef = group!}
     >
-        <ImagePlane
-            texture={character.texture}
-            position={[character.texture.width / character.texture.height / 2, 0.5, 0]}
-        />
+        {#if character.texture !== null}
+            <ImagePlane
+                texture={character.texture}
+                position={[character.texture.width / character.texture.height / 2, 0.5, 0]}
+            />
+        {/if}
 
         {#if showEditor}
             <CurveEditor

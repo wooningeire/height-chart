@@ -3,11 +3,16 @@ import "./index.scss";
 import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
-import {PCFSoftShadowMap} from "three";
+import {PCFSoftShadowMap, Vector3, TextureLoader, SRGBColorSpace, type Texture} from "three";
 import { Character } from "$/lib/types/Character.svelte";
+import { CompositeCurve } from "$/lib/types/CompositeCurve.svelte";
+import { Bezier } from "$/lib/types/Bezier.svelte";
 import CharacterAddForm from "./CharacterAddForm.svelte";
-    import CharacterListitem from "./CharacterListitem.svelte";
-    import Separator from "@/Separator.svelte";
+import CharacterListitem from "./CharacterListitem.svelte";
+import Separator from "@/Separator.svelte";
+import { onMount } from "svelte";
+    import { createTextureFromUrl } from "$/lib/createTexture";
+    import { loadCharacter } from "$/lib/loadCharacter";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -19,6 +24,33 @@ const sortedCharacters = $derived(
 );
 
 let addedCharacter = $state<Character | null>(null);
+
+
+const loadCharacters = async () => {
+    try {
+        const response = await fetch("/api/character");
+        if (!response.ok) {
+            console.error("Failed to load characters");
+            return;
+        }
+
+        const charactersData = await response.json();
+
+        const loadedCharacters = await Promise.all(
+            charactersData.map((characterData: any) => loadCharacter(characterData))
+        );
+
+        for (const character of loadedCharacters) {
+            characters.set(character.id!, character);
+        }
+    } catch (error) {
+        console.error("Failed to fetch characters:", error);
+    }
+};
+
+onMount(() => {
+    loadCharacters();
+});
 </script>
 
 <main>
@@ -28,9 +60,10 @@ let addedCharacter = $state<Character | null>(null);
             onCancel={() => addedCharacter = null}
             onSubmit={character => {
                 addedCharacter = null;
-                
-                character.id = crypto.randomUUID();
-                characters.set(character.id, character);
+
+                if (character.id) {
+                    characters.set(character.id, character);
+                }
             }}
         />
 

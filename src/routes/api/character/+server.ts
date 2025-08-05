@@ -3,6 +3,40 @@ import { characterTable } from "$/lib/server/db/schema";
 import { supabase } from "$/lib/server/supabase";
 import {type RequestHandler, error } from "@sveltejs/kit";
 
+export const GET: RequestHandler = async () => {
+    try {
+        const characters = await db.select().from(characterTable);
+
+        const charactersWithUrls = await Promise.all(
+            characters.map(async (character) => {
+                const imageUrl = `public/${character.id}.png`;
+                const { data: signedUrlData, error: signedUrlError } = await supabase
+                    .storage
+                    .from("character")
+                    .createSignedUrl(imageUrl, 60 * 60 * 24 * 3);
+
+                if (signedUrlError) {
+                    console.error("Signed URL error for character", character.id, signedUrlError);
+                    return {
+                        ...character,
+                        imageUrl: null
+                    };
+                }
+
+                return {
+                    ...character,
+                    imageUrl: signedUrlData.signedUrl
+                };
+            })
+        );
+
+        return new Response(JSON.stringify(charactersWithUrls));
+    } catch (err) {
+        console.error("Error fetching characters:", err);
+        return error(500, "Failed to fetch characters");
+    }
+};
+
 export const PUT: RequestHandler = async ({ request }) => {
     const formData = await request.formData();
 
@@ -63,3 +97,6 @@ export const PUT: RequestHandler = async ({ request }) => {
         imageUrl: signedUrlData.signedUrl,
     }));
 };
+
+
+
