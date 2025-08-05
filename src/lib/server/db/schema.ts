@@ -1,6 +1,11 @@
-import { pgTable, serial, text, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, uuid, varchar, vector, real, jsonb } from 'drizzle-orm/pg-core';
 
-export const user = pgTable('user', {
-	id: serial('id').primaryKey(),
-	age: integer('age')
-});
+export const characterTable = pgTable("character", {
+	id: serial().primaryKey(),
+	name: varchar({length: 256}).notNull(),
+	referenceCurve: jsonb().notNull(),
+	targetLength: real().notNull(),
+	offsetPos: real().array().notNull(),
+	offsetScale: real().array().notNull(),
+})
+	.enableRLS();

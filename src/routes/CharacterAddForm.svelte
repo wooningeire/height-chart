@@ -2,13 +2,13 @@
 import { Character } from "$/lib/types/Character.svelte";
 import Button from "@/Button.svelte";
 import Separator from "@/Separator.svelte";
-import {Texture, Vector3, CubicBezierCurve3, PCFSoftShadowMap, TextureLoader, SRGBColorSpace} from "three";
+import {Texture, Vector3, TextureLoader, SRGBColorSpace} from "three";
 import NumberEntry from "@/NumberEntry.svelte";
 import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
 import { Bezier } from "$/lib/types/Bezier.svelte";
-import { sub } from "three/tsl";
-    import TextEntry from "@/TextEntry.svelte";
+import TextEntry from "@/TextEntry.svelte";
 
+    
 let {
     onCreate,
     onCancel,
@@ -19,7 +19,7 @@ let {
     onSubmit?: (character: Character) => void,
 } = $props();
 
-let addedCharacter = $state<Character | null>(null);
+let addedCharacter = $state.raw<Character | null>(null);
 
 
 const readAsDataUrl = (file: File) => {
@@ -33,7 +33,7 @@ const readAsDataUrl = (file: File) => {
     });
 };
 
-const createTexture = (url: string) => {
+const createTextureFromUrl = (url: string) => {
     return new Promise<Texture>((resolve, reject) => {
         const loader = new TextureLoader();
 
@@ -54,10 +54,10 @@ const createTexture = (url: string) => {
     });
 };
 
-const loadTexture = async (file: File) => {
-    const dataUrl = await readAsDataUrl(file);
-    const texture = await createTexture(dataUrl);
-    return {dataUrl, texture};
+const createTextureFromFile = async (file: File) => {
+    const url = await readAsDataUrl(file);
+    const texture = await createTextureFromUrl(url);
+    return {url, texture};
 };
 
 
@@ -70,12 +70,13 @@ const handleImageUpload = async () => {
 
     if (!file.type.startsWith("image/")) return null;
 
-    const {dataUrl, texture} = await loadTexture(file);
+    const {url, texture} = await createTextureFromFile(file);
 
     if (addedCharacter === null) {
         addedCharacter = new Character({
             name: file.name,
-            imageUrl: dataUrl,
+            imageUrl: url,
+            file,
             texture,
             referenceCurve: new CompositeCurve({
                 segments: [
@@ -91,7 +92,7 @@ const handleImageUpload = async () => {
 
         onCreate?.(addedCharacter);
     } else {
-        addedCharacter.imageUrl = dataUrl;
+        addedCharacter.imageUrl = url;
         addedCharacter.texture = texture;
         addedCharacter.offsetPos = new Vector3(texture.width / texture.height / 2, 0, 0);
     }
@@ -104,8 +105,37 @@ const cancel = () => {
     addedCharacter = null;
 };
 
-const submit = () => {
+const submit = async () => {
     if (addedCharacter === null) return;
+
+    const file = addedCharacter.file;
+    if (file === null) return;
+
+    const formData = new FormData();
+    formData.append('name', addedCharacter.name);
+    formData.append('targetLength', addedCharacter.referenceCurve.targetLength.toString());
+    formData.append('offsetPos', JSON.stringify(addedCharacter.offsetPos.toArray()));
+    formData.append('offsetScale', JSON.stringify([1, 1, 1]));
+    formData.append('referenceCurve', JSON.stringify(addedCharacter.referenceCurve.segments.map(segment => {
+        return [
+            segment.start.toArray(),
+            segment.end.toArray(),
+            (segment.startDeriv ?? segment.start).toArray(),
+            (segment.endDeriv ?? segment.end).toArray(),
+        ];
+    })));
+    formData.append('file', file);
+
+    const response = await fetch("/api/character", {
+        method: "PUT",
+        body: formData,
+    });
+
+    if (!response.ok) return;
+    const { imageUrl } = await response.json();
+
+    addedCharacter.imageUrl = imageUrl;
+    addedCharacter.texture = await createTextureFromUrl(imageUrl);
 
     onSubmit?.(addedCharacter);
     addedCharacter = null;
