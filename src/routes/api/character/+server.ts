@@ -16,23 +16,21 @@ export const GET: RequestHandler = async () => {
                     .createSignedUrl(imageUrl, 60 * 60 * 24 * 3);
 
                 if (signedUrlError) {
-                    console.error("Signed URL error for character", character.id, signedUrlError);
                     return {
                         ...character,
-                        imageUrl: null
+                        imageUrl: null,
                     };
                 }
 
                 return {
                     ...character,
-                    imageUrl: signedUrlData.signedUrl
+                    imageUrl: signedUrlData.signedUrl,
                 };
             })
         );
 
         return new Response(JSON.stringify(charactersWithUrls));
     } catch (err) {
-        console.error("Error fetching characters:", err);
         return error(500, "Failed to fetch characters");
     }
 };
@@ -78,7 +76,6 @@ export const PUT: RequestHandler = async ({ request }) => {
         });
 
     if (uploadError) {
-        console.error("Upload error:", uploadError);
         return error(500, "Failed to upload image");
     }
 
@@ -88,7 +85,6 @@ export const PUT: RequestHandler = async ({ request }) => {
         .createSignedUrl(imageUrl, 60 * 60 * 24 * 3);
 
     if (signedUrlError) {
-        console.error("Signed URL error:", signedUrlError);
         return error(500, "Failed to create image URL");
     }
 

@@ -11,11 +11,13 @@ let {
     onCurveChange,
     meshLineScaleFac = 1,
     groupMatrix,
+    showEditor = false,
 }: {
     curve: Bezier[],
     onCurveChange?: (curves: Bezier[]) => void,
     meshLineScaleFac?: number,
     groupMatrix: Matrix4,
+    showEditor?: boolean,
 } = $props();
 
 let curveSegments = $state(curve);
@@ -97,54 +99,56 @@ const onPositionChange = (index: number, position: Vector3, type: DragType) => {
         />
     </T.Mesh>
 
-    <CurveVertex
-        position={startPosition.toArray()}
-        onPositionDrag={position => onPositionDrag(i, position, "vertex")}
-        onPositionChange={position => onPositionChange(i, position, "vertex")}
-        {meshLineScaleFac}
-        {groupMatrix}
-    />
-
-    {#if curveSegment.startDeriv !== null}
-        <CurveHandle
-            position={startDerivPosition.toArray()}
-            onPositionDrag={position => onPositionDrag(i, position, "startDeriv")}
-            onPositionChange={position => onPositionChange(i, position, "startDeriv")}
+    {#if showEditor}
+        <CurveVertex
+            position={startPosition.toArray()}
+            onPositionDrag={position => onPositionDrag(i, position, "vertex")}
+            onPositionChange={position => onPositionChange(i, position, "vertex")}
             {meshLineScaleFac}
             {groupMatrix}
         />
 
-        <T.Mesh>
-            <MeshLineGeometry points={[startPosition, startDerivPosition]} />
-            <MeshLineMaterial
-                color="#fff"
-                width={0.025 * meshLineScaleFac}
-                dashArray={1/32}
-                dashRatio={0.5}
-                transparent
+        {#if curveSegment.startDeriv !== null}
+            <CurveHandle
+                position={startDerivPosition.toArray()}
+                onPositionDrag={position => onPositionDrag(i, position, "startDeriv")}
+                onPositionChange={position => onPositionChange(i, position, "startDeriv")}
+                {meshLineScaleFac}
+                {groupMatrix}
             />
-        </T.Mesh>
-    {/if}
 
-    {#if curveSegment.endDeriv !== null}
-        <CurveHandle
-            position={endDerivPosition.toArray()}
-            onPositionDrag={position => onPositionDrag(i, position, "endDeriv")}
-            onPositionChange={position => onPositionChange(i, position, "endDeriv")}
-            {meshLineScaleFac}
-            {groupMatrix}
-        />
+            <T.Mesh>
+                <MeshLineGeometry points={[startPosition, startDerivPosition]} />
+                <MeshLineMaterial
+                    color="#fff"
+                    width={0.025 * meshLineScaleFac}
+                    dashArray={1/32}
+                    dashRatio={0.5}
+                    transparent
+                />
+            </T.Mesh>
+        {/if}
 
-        <T.Mesh>
-            <MeshLineGeometry points={[endPosition, endDerivPosition]} />
-            <MeshLineMaterial
-                color="#fff"
-                width={0.025 * meshLineScaleFac}
-                dashArray={1/32}
-                dashRatio={0.5}
-                transparent
+        {#if curveSegment.endDeriv !== null}
+            <CurveHandle
+                position={endDerivPosition.toArray()}
+                onPositionDrag={position => onPositionDrag(i, position, "endDeriv")}
+                onPositionChange={position => onPositionChange(i, position, "endDeriv")}
+                {meshLineScaleFac}
+                {groupMatrix}
             />
-        </T.Mesh>
+
+            <T.Mesh>
+                <MeshLineGeometry points={[endPosition, endDerivPosition]} />
+                <MeshLineMaterial
+                    color="#fff"
+                    width={0.025 * meshLineScaleFac}
+                    dashArray={1/32}
+                    dashRatio={0.5}
+                    transparent
+                />
+            </T.Mesh>
+        {/if}
     {/if}
 {/each}
 
@@ -155,11 +159,13 @@ const onPositionChange = (index: number, position: Vector3, type: DragType) => {
         : finalCurveSegment.end
     }
 
-    <CurveVertex
-        position={finalStartPosition.toArray()}
-        onPositionDrag={position => onPositionDrag(curveSegments.length, position, "vertex")}
-        onPositionChange={position => onPositionChange(curveSegments.length, position, "vertex")}
-        {meshLineScaleFac}
-        {groupMatrix}
-    />
+    {#if showEditor}
+        <CurveVertex
+            position={finalStartPosition.toArray()}
+            onPositionDrag={position => onPositionDrag(curveSegments.length, position, "vertex")}
+            onPositionChange={position => onPositionChange(curveSegments.length, position, "vertex")}
+            {meshLineScaleFac}
+            {groupMatrix}
+        />
+    {/if}
 {/if}

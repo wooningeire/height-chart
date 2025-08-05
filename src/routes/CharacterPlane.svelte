@@ -2,11 +2,11 @@
 import type { Character } from "$/lib/types/Character.svelte";
 import { T } from "@threlte/core";
 import {Group, Matrix4, Mesh, Texture, Vector3} from "three";
-import CurveEditor from "./CurveEditor.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
     import { Spring } from "svelte/motion";
     import ImagePlane from "./ImagePlane.svelte";
     import CurveVertex from "./CurveVertex.svelte";
+    import CharacterReferenceCurve from "./CharacterReferenceCurve.svelte";
 
 let {
     character,
@@ -57,14 +57,15 @@ let innerGroupMatrix = $derived.by(() => {
             />
         {/if}
 
-        {#if showEditor}
-            <CurveEditor
-                curve={character.referenceCurve.segments}
-                onCurveChange={onReferenceCurveChange}
-                meshLineScaleFac={scaleFac.current}
-                groupMatrix={innerGroupMatrix}
-            />
+        <CharacterReferenceCurve
+            curve={character.referenceCurve.segments}
+            onCurveChange={onReferenceCurveChange}
+            meshLineScaleFac={scaleFac.current}
+            groupMatrix={innerGroupMatrix}
+            {showEditor}
+        />
 
+        {#if showEditor}
             {@const offsetPosition = offsetDrag?.toArray() ?? [offsetX.current, offsetY.current, offsetZ.current]}
             <CurveVertex
                 position={offsetPosition}
