@@ -7,6 +7,7 @@ import {PCFSoftShadowMap} from "three";
 import { Character } from "$/lib/types/Character.svelte";
 import CharacterAddForm from "./CharacterAddForm.svelte";
     import CharacterListitem from "./CharacterListitem.svelte";
+    import Separator from "@/Separator.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -32,7 +33,7 @@ let addedCharacter = $state<Character | null>(null);
                 characters.set(character.id, character);
             }}
         />
-        
+
         {#if characters.size > 0}
             <character-list>
                 <h3>Characters</h3>
@@ -66,9 +67,13 @@ character-overlay {
     position: fixed;
     padding: 1rem;
     width: 16rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 
     background: oklch(1 0 0 / 0.5);
     backdrop-filter: blur(0.5rem);
+
 
     z-index: 1;
 }
@@ -88,9 +93,8 @@ img {
 }
 
 character-list {
-    margin-top: 20px;
-
     display: flex;
+    gap: 0.5rem;
     flex-direction: column;
     align-items: stretch;
 }
