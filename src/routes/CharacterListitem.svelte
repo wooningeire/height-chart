@@ -12,7 +12,10 @@ let {
 </script>
 
 
-<Button {onClick}>
+<Button
+    {onClick}
+    ariaLabel={`Character ${character.name}`}
+>
     <character-name>{character.name}</character-name>
 
     <img src={character.imageUrl} alt={character.name} />

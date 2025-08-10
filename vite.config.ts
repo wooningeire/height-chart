@@ -1,6 +1,6 @@
 import { svelteTesting } from '@testing-library/svelte/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [sveltekit()],
@@ -11,11 +11,11 @@ export default defineConfig({
 				plugins: [svelteTesting()],
 				test: {
 					name: 'client',
-					environment: 'jsdom',
+					environment: 'happy-dom',
 					clearMocks: true,
 					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
 					exclude: ['src/lib/server/**'],
-					setupFiles: ['./vitest-setup-client.ts']
+					setupFiles: ['./vitest-setup-client.ts', './src/tests/setup-canvas.ts']
 				}
 			},
 			{

@@ -4,13 +4,18 @@
 let {
     children,
     onClick,
+    ariaLabel,
 }: {
     children: Snippet,
     onClick?: () => void,
+    ariaLabel?: string,
 } = $props();
 </script>
 
-<button onclick={onClick}>
+<button
+    onclick={onClick}
+    aria-label={ariaLabel}
+>
     <button-content>
         {@render children?.()}
     </button-content>

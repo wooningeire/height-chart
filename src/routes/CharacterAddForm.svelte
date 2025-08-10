@@ -103,20 +103,21 @@ const submit = async () => {
     onSubmit?.(addedCharacter);
     addedCharacter = null;
 };
+
+const addCharacterText = $derived(addedCharacter === null ? "Add a character" : "Replace image");
 </script>
 
 
 <added-character-details>
-    <Button onClick={() => fileInputEl.click()}>
-        {#if addedCharacter === null}
-            Add a character
-        {:else}
-            Replace image
-        {/if}
+    <Button
+        onClick={() => fileInputEl.click()}
+        ariaLabel={addCharacterText}
+    >
+        {addCharacterText}
     </Button>
 
     {#if addedCharacter !== null}
-        <Button onClick={cancel}>
+        <Button onClick={cancel} ariaLabel="Cancel">
             Cancel
         </Button>
 
@@ -155,7 +156,10 @@ const submit = async () => {
 
         <Separator />
 
-        <Button onClick={submit}>
+        <Button
+            onClick={submit}
+            ariaLabel="Submit"
+        >
             Submit
         </Button>
     {/if}
