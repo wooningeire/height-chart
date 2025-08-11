@@ -45,6 +45,7 @@ let {
                     {...elProps}
                     contenteditable
                     class:invalid={!valid}
+                    aria-label={label}
                 ></text-entry-input>
             {/snippet}
         </TextInput>

@@ -15,4 +15,9 @@ Object.defineProperty(window, 'matchMedia', {
 	})),
 })
 
-// add more mocks here if you need them
+// happy-dom/jsdom do not define VideoFrame, but three@0.179 checks it.
+// Provide a minimal stub to avoid ReferenceError during tests.
+if (typeof (globalThis as any).VideoFrame === 'undefined') {
+    // eslint-disable-next-line @typescript-eslint/no-extraneous-class
+    (globalThis as any).VideoFrame = class {};
+}

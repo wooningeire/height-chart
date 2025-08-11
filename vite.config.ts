@@ -4,7 +4,10 @@ import { defineConfig } from 'vitest/config';
 import { threlteTesting } from '@threlte/test/vite';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+    plugins: [sveltekit()],
+    resolve: {
+        dedupe: ["three"],
+    },
 	test: {
         projects: [
 			{
@@ -12,7 +15,7 @@ export default defineConfig({
                 plugins: [svelteTesting(), threlteTesting()],
 				test: {
 					name: 'client',
-					environment: 'happy-dom',
+					environment: 'jsdom',
 					clearMocks: true,
 					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
 					exclude: ['src/lib/server/**'],

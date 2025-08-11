@@ -4,6 +4,13 @@ import { useCursor, type IntersectionEvent } from "@threlte/extras";
 import { Camera, Matrix4, Raycaster, Vector2, Vector3 } from "three";
 
 
+export interface IDraggerAgainstZPlane {
+    hovering: boolean;
+    dragging: boolean;
+    isMovingAlongZAxis: boolean;
+}
+
+
 const raycast = (planeNormal: Vector3, planePoint: Vector3, clientX: number, clientY: number, camera: Camera) => {
     const raycaster = new Raycaster();
 
@@ -28,7 +35,8 @@ const raycast = (planeNormal: Vector3, planePoint: Vector3, clientX: number, cli
 
 
 const DRAG_THRESHOLD = 4;
-export class DraggerAgainstZPlane {
+
+export class DraggerAgainstZPlane implements IDraggerAgainstZPlane {
     readonly sceneState = $state<SceneState>()!;
     readonly onPositionDrag?: (position: Vector3) => void;
     readonly onPositionChange?: (position: Vector3) => void;

@@ -171,6 +171,7 @@ const addCharacterText = $derived(addedCharacter === null ? "Add a character" : 
     accept="image/*" 
     onchange={handleImageUpload}
     bind:this={fileInputEl}
+    aria-label="Upload character image"
 />
 
 <style lang="scss">

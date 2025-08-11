@@ -1,5 +1,5 @@
 <script lang="ts">
-import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
+import { type IDraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
 import { sceneState } from "$/lib/types/SceneState.svelte";
 import {T} from "@threlte/core";
     import { MeshLineGeometry, MeshLineMaterial } from "@threlte/extras";
@@ -11,7 +11,7 @@ let {
     meshLineScaleFac = 1,
 }: {
     position: [number, number, number],
-    dragger: DraggerAgainstZPlane,
+    dragger: IDraggerAgainstZPlane,
     meshLineScaleFac?: number,
 } = $props();
 
