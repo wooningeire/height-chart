@@ -124,7 +124,7 @@ const addCharacterText = $derived(addedCharacter === null ? "Add a character" : 
         <added-character-image>
             <img
                 src={addedCharacter.imageUrl}
-                alt={addedCharacter.name}
+                alt="Character preview"
             />
         </added-character-image>
 

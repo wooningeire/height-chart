@@ -1,7 +1,6 @@
 <script lang="ts">
 import {T} from "@threlte/core";
-import { untrack } from "svelte";
-import {DoubleSide, Mesh, Texture, Vector3} from "three";
+import {DoubleSide, Mesh, Texture} from "three";
 
 let {
     texture,
@@ -28,6 +27,7 @@ let aspectRatio = $derived.by(() => {
         {scale}
         castShadow
         receiveShadow
+        name="image-plane"
     >
         <T.PlaneGeometry args={[aspectRatio, 1]} />
         <T.MeshStandardMaterial

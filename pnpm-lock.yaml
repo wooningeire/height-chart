@@ -51,9 +51,15 @@ importers:
       '@testing-library/svelte':
         specifier: ^5.2.8
         version: 5.2.8(svelte@5.38.0)(vite@7.1.1(@types/node@24.2.1)(sass@1.90.0))(vitest@3.2.4(@types/node@24.2.1)(happy-dom@18.0.1)(jsdom@26.1.0(canvas@3.1.2))(sass@1.90.0))
+      '@threlte/test':
+        specifier: ^1.0.0
+        version: 1.0.0(@threlte/core@8.1.4(svelte@5.38.0)(three@0.179.1))(@threlte/extras@9.4.4(@types/three@0.179.0)(svelte@5.38.0)(three@0.179.1))(svelte@5.38.0)
       '@types/three':
         specifier: ^0.179.0
         version: 0.179.0
+      canvas:
+        specifier: ^3.1.2
+        version: 3.1.2
       drizzle-kit:
         specifier: ^0.31.4
         version: 0.31.4
@@ -735,6 +741,13 @@ packages:
     peerDependencies:
       svelte: '>=5'
       three: '>=0.160'
+
+  '@threlte/test@1.0.0':
+    resolution: {integrity: sha512-4MJL42dPAfxqYwQFXn+hjVgpWTAZeTgU2pDFsW18RwUB6cE7TSqA/w4usH2ITCK2qgeTpLLvb22W+fR0S4EY+w==}
+    peerDependencies:
+      '@threlte/core': '>=8'
+      '@threlte/extras': '>=9'
+      svelte: '>=5'
 
   '@tweenjs/tween.js@23.1.3':
     resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
@@ -2272,6 +2285,12 @@ snapshots:
     transitivePeerDependencies:
       - '@types/three'
 
+  '@threlte/test@1.0.0(@threlte/core@8.1.4(svelte@5.38.0)(three@0.179.1))(@threlte/extras@9.4.4(@types/three@0.179.0)(svelte@5.38.0)(three@0.179.1))(svelte@5.38.0)':
+    dependencies:
+      '@threlte/core': 8.1.4(svelte@5.38.0)(three@0.179.1)
+      '@threlte/extras': 9.4.4(@types/three@0.179.0)(svelte@5.38.0)(three@0.179.1)
+      svelte: 5.38.0
+
   '@tweenjs/tween.js@23.1.3': {}
 
   '@types/aria-query@5.0.4': {}
@@ -2394,8 +2413,7 @@ snapshots:
 
   axobject-query@4.1.0: {}
 
-  base64-js@1.5.1:
-    optional: true
+  base64-js@1.5.1: {}
 
   bidi-js@1.0.3:
     dependencies:
@@ -2406,7 +2424,6 @@ snapshots:
       buffer: 5.7.1
       inherits: 2.0.4
       readable-stream: 3.6.2
-    optional: true
 
   braces@3.0.3:
     dependencies:
@@ -2419,7 +2436,6 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
-    optional: true
 
   cac@6.7.14: {}
 
@@ -2431,7 +2447,6 @@ snapshots:
     dependencies:
       node-addon-api: 7.1.1
       prebuild-install: 7.1.3
-    optional: true
 
   chai@5.2.1:
     dependencies:
@@ -2447,8 +2462,7 @@ snapshots:
     dependencies:
       readdirp: 4.1.2
 
-  chownr@1.1.4:
-    optional: true
+  chownr@1.1.4: {}
 
   clsx@2.1.1: {}
 
@@ -2479,12 +2493,10 @@ snapshots:
   decompress-response@6.0.0:
     dependencies:
       mimic-response: 3.1.0
-    optional: true
 
   deep-eql@5.0.2: {}
 
-  deep-extend@0.6.0:
-    optional: true
+  deep-extend@0.6.0: {}
 
   deepmerge@4.3.1: {}
 
@@ -2493,8 +2505,7 @@ snapshots:
   detect-libc@1.0.3:
     optional: true
 
-  detect-libc@2.0.4:
-    optional: true
+  detect-libc@2.0.4: {}
 
   devalue@5.1.1: {}
 
@@ -2522,7 +2533,6 @@ snapshots:
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
-    optional: true
 
   entities@6.0.1: {}
 
@@ -2599,8 +2609,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
 
-  expand-template@2.0.3:
-    optional: true
+  expand-template@2.0.3: {}
 
   expect-type@1.2.2: {}
 
@@ -2615,8 +2624,7 @@ snapshots:
       to-regex-range: 5.0.1
     optional: true
 
-  fs-constants@1.0.0:
-    optional: true
+  fs-constants@1.0.0: {}
 
   fsevents@2.3.2:
     optional: true
@@ -2628,8 +2636,7 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
-  github-from-package@0.0.0:
-    optional: true
+  github-from-package@0.0.0: {}
 
   happy-dom@18.0.1:
     dependencies:
@@ -2659,18 +2666,15 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  ieee754@1.2.1:
-    optional: true
+  ieee754@1.2.1: {}
 
   immutable@5.1.3: {}
 
   indent-string@4.0.0: {}
 
-  inherits@2.0.4:
-    optional: true
+  inherits@2.0.4: {}
 
-  ini@1.3.8:
-    optional: true
+  ini@1.3.8: {}
 
   is-extglob@2.1.1:
     optional: true
@@ -2756,18 +2760,15 @@ snapshots:
       picomatch: 2.3.1
     optional: true
 
-  mimic-response@3.1.0:
-    optional: true
+  mimic-response@3.1.0: {}
 
   min-indent@1.0.1: {}
 
-  minimist@1.2.8:
-    optional: true
+  minimist@1.2.8: {}
 
   mitt@3.0.1: {}
 
-  mkdirp-classic@0.5.3:
-    optional: true
+  mkdirp-classic@0.5.3: {}
 
   moo-color@1.0.3:
     dependencies:
@@ -2781,23 +2782,19 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  napi-build-utils@2.0.0:
-    optional: true
+  napi-build-utils@2.0.0: {}
 
   node-abi@3.75.0:
     dependencies:
       semver: 7.7.2
-    optional: true
 
-  node-addon-api@7.1.1:
-    optional: true
+  node-addon-api@7.1.1: {}
 
   nwsapi@2.2.21: {}
 
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
-    optional: true
 
   parse5@7.3.0:
     dependencies:
@@ -2844,7 +2841,6 @@ snapshots:
       simple-get: 4.0.1
       tar-fs: 2.1.3
       tunnel-agent: 0.6.0
-    optional: true
 
   pretty-format@27.5.1:
     dependencies:
@@ -2856,7 +2852,6 @@ snapshots:
     dependencies:
       end-of-stream: 1.4.5
       once: 1.4.0
-    optional: true
 
   punycode@2.3.1: {}
 
@@ -2866,7 +2861,6 @@ snapshots:
       ini: 1.3.8
       minimist: 1.2.8
       strip-json-comments: 2.0.1
-    optional: true
 
   react-is@17.0.2: {}
 
@@ -2875,7 +2869,6 @@ snapshots:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
-    optional: true
 
   readdirp@4.1.2: {}
 
@@ -2920,8 +2913,7 @@ snapshots:
     dependencies:
       mri: 1.2.0
 
-  safe-buffer@5.2.1:
-    optional: true
+  safe-buffer@5.2.1: {}
 
   safer-buffer@2.1.2: {}
 
@@ -2937,22 +2929,19 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  semver@7.7.2:
-    optional: true
+  semver@7.7.2: {}
 
   set-cookie-parser@2.7.1: {}
 
   siginfo@2.0.0: {}
 
-  simple-concat@1.0.1:
-    optional: true
+  simple-concat@1.0.1: {}
 
   simple-get@4.0.1:
     dependencies:
       decompress-response: 6.0.0
       once: 1.4.0
       simple-concat: 1.0.1
-    optional: true
 
   sirv@3.0.1:
     dependencies:
@@ -2976,14 +2965,12 @@ snapshots:
   string_decoder@1.3.0:
     dependencies:
       safe-buffer: 5.2.1
-    optional: true
 
   strip-indent@3.0.0:
     dependencies:
       min-indent: 1.0.1
 
-  strip-json-comments@2.0.1:
-    optional: true
+  strip-json-comments@2.0.1: {}
 
   strip-literal@3.0.0:
     dependencies:
@@ -3034,7 +3021,6 @@ snapshots:
       mkdirp-classic: 0.5.3
       pump: 3.0.3
       tar-stream: 2.2.0
-    optional: true
 
   tar-stream@2.2.0:
     dependencies:
@@ -3043,7 +3029,6 @@ snapshots:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
-    optional: true
 
   three-instanced-uniforms-mesh@0.52.4(three@0.179.1):
     dependencies:
@@ -3121,7 +3106,6 @@ snapshots:
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
-    optional: true
 
   tweakpane@3.1.10: {}
 
@@ -3131,8 +3115,7 @@ snapshots:
 
   undici-types@7.10.0: {}
 
-  util-deprecate@1.0.2:
-    optional: true
+  util-deprecate@1.0.2: {}
 
   vite-node@3.2.4(@types/node@24.2.1)(sass@1.90.0):
     dependencies:
@@ -3248,8 +3231,7 @@ snapshots:
       siginfo: 2.0.0
       stackback: 0.0.2
 
-  wrappy@1.0.2:
-    optional: true
+  wrappy@1.0.2: {}
 
   ws@8.18.3: {}
 
