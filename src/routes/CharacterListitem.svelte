@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Character } from "$/lib/types/Character.svelte";
     import Button from "@/Button.svelte";
+    import OwnerBadge from "$lib/components/OwnerBadge.svelte";
 
 let {
     character,
@@ -16,7 +17,9 @@ let {
     {onClick}
     ariaLabel={`Character ${character.name}`}
 >
-    <character-name>{character.name}</character-name>
+    <character-name>
+        {character.name}
+    </character-name>
 
     <img src={character.imageUrl} alt={character.name} />
 </Button>

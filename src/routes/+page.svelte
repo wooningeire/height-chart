@@ -70,7 +70,11 @@ onMount(async () => {
             {#if user === null}
                 <DiscordLoginButton />
             {:else}
-                <UserBadge {user} />
+                <UserBadge
+                    {user}
+                    large
+                />
+                
                 <DiscordLogoutButton />
             {/if}
             
@@ -123,20 +127,13 @@ character-overlay {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    overflow-y: auto;
 }
 
 scene-container {
     flex-grow: 1;
     flex-shrink: 1;
     user-select: none;
-}
-
-
-img {
-    max-height: 10rem;
-    object-fit: contain;
-
-    filter: drop-shadow(0 0.0625rem 0.0625rem oklch(0 0 0 / 0.125));
 }
 
 character-list {

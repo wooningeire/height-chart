@@ -1,9 +1,10 @@
 $padding: 0.5rem;
-$bg: oklch(0.5 0.03 230 / 0.5);
+$bg: var(--cyan-1);
 
 @mixin container {
-    border: 0.0625rem solid oklch(0 0 0 / 0.25);
-    box-shadow: 0 0.0625rem 0.25rem oklch(0 0 0 / 0.0625);
+    box-shadow:
+        0 0.0625rem 0.25rem oklch(0 0 0 / 0.25),
+        0 0 1rem var(--cyan-1) inset;
 
     background: $bg;
 

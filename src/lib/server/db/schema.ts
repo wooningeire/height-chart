@@ -1,7 +1,7 @@
 import { pgTable, serial, text, integer, uuid, varchar, vector, real, jsonb, bigint, foreignKey } from 'drizzle-orm/pg-core';
 
 export const userTable = pgTable("user", {
-	discordId: bigint({mode: "number"}).notNull(),
+	discordId: bigint({mode: "bigint"}).notNull(),
 })
 	.enableRLS();
 
@@ -12,6 +12,7 @@ export const characterTable = pgTable("character", {
 	targetLength: real().notNull(),
 	offsetPos: real().array().notNull(),
 	offsetScale: real().array().notNull(),
+	ownerUserId: bigint({mode: "bigint"}).references(() => userTable.discordId),
 })
 	.enableRLS();
 

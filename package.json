@@ -14,8 +14,8 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
 		"test:e2e": "playwright test",
-    "test": "pnpm test:unit -- --run && pnpm test:e2e",
-    "test:unit": "vitest -c vite.config.ts"
+		"test": "pnpm test:unit -- --run && pnpm test:e2e",
+		"test:unit": "vitest -c vite.config.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.49.1",
@@ -37,6 +37,7 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
+		"@lucide/svelte": "^0.539.0",
 		"@playwright/test": "^1.54.2",
 		"@supabase/supabase-js": "^2.54.0",
 		"@sveltejs/adapter-auto": "^6.0.2",

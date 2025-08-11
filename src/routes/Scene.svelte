@@ -1,15 +1,15 @@
 <script lang="ts">
-import {setContext, untrack} from "svelte";
+import {untrack} from "svelte";
 import {T} from "@threlte/core";
-import {ContactShadows, Environment, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
-import type { SvelteMap } from "svelte/reactivity";
+import {interactivity, OrbitControls} from "@threlte/extras";
 import type { Character } from "$/lib/types/Character.svelte";
 import CharacterPlane from "./CharacterPlane.svelte";
-import {Texture, CubicBezierCurve3, PerspectiveCamera, Vector3, Scene, Color} from "three";
+import {Vector3} from "three";
 import {sceneState} from "$/lib/types/SceneState.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
-    import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
-    import { spring, Spring } from "svelte/motion";
+import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
+import { Spring } from "svelte/motion";
+import Grids from "./Grids.svelte";
 
 let {
     characters,
@@ -107,9 +107,8 @@ $effect(() => {
     />
 </T.Mesh>
 
-<T.GridHelper
-    args={[20, 20, "#999", "#eee"]}
-/>
+
+<Grids />
 
 
 

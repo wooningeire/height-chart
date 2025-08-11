@@ -1,11 +1,13 @@
 import { db } from "$/lib/server/db";
-import { characterTable } from "$/lib/server/db/schema";
+import { characterTable, userTable } from "$/lib/server/db/schema";
 import { supabase } from "$/lib/server/supabase";
-import {type RequestHandler, error } from "@sveltejs/kit";
+import {type RequestHandler, error, json } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
     try {
-        const characters = await db.select().from(characterTable);
+        const characters = await db
+            .select()
+            .from(characterTable);
 
         const charactersWithUrls = await Promise.all(
             characters.map(async (character) => {
@@ -29,13 +31,19 @@ export const GET: RequestHandler = async () => {
             })
         );
 
-        return new Response(JSON.stringify(charactersWithUrls));
+        return json(charactersWithUrls);
     } catch (err) {
         return error(500, "Failed to fetch characters");
     }
 };
 
 export const PUT: RequestHandler = async ({ request }) => {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (user === null || userError !== null) return error(401, "Unauthorized");
+
+
+
+
     const formData = await request.formData();
 
     const name = formData.get('name') as string;
@@ -58,6 +66,7 @@ export const PUT: RequestHandler = async ({ request }) => {
             targetLength,
             offsetPos,
             offsetScale,
+            ownerUserId: BigInt(user.id),
         })
         .returning({
             id: characterTable.id,

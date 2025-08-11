@@ -79,8 +79,4 @@ text-entry-input {
 
     text-align: center;
 }
-
-label {
-    padding: raised.$padding raised.$padding raised.$padding 0;
-}
 </style>

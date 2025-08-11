@@ -30,7 +30,7 @@ export const loadCharacter = (characterData: any) => {
     });
 
     (async () => {
-        character.texture = await createTextureFromUrl(characterData.imageUrl)
+        character.texture = await createTextureFromUrl(characterData.imageUrl);
     })();
 
     return character;
