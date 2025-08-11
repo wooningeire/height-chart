@@ -9,20 +9,22 @@ import { sceneState } from "$/lib/types/SceneState.svelte";
 
 vi.mock("svelte/motion", () => {
     class InstantSpring<T = number> {
-        private _current: T;
-        private _target: T;
+        target: T = $state()!;
+        current: T = $derived(this.target);
+
         constructor(initial: T) {
-            this._current = initial as T;
-            this._target = initial as T;
+            this.target = initial;
         }
-        get current(): T { return this._current; }
-        set target(value: T) { this._target = value; this._current = value; }
-        set(value: T) { this._current = value as T; this._target = value as T; }
+
+        set(value: T) {
+            this.target = value;
+        }
     }
-    return { Spring: InstantSpring } as any;
+
+    return { Spring: InstantSpring };
 });
 
-function makeCharacterWithLength(length: number): Character {
+function createCharacterWithLength(length: number): Character {
     const curve = new CompositeCurve({
         segments: [ new Bezier({ start: new Vector3(0, 0, 0), end: new Vector3(1, 0, 0) }) ],
         targetLength: length
@@ -31,17 +33,19 @@ function makeCharacterWithLength(length: number): Character {
 }
 
 describe("Scene camera zoom", () => {
-    it.skip("updates camera distance when addedCharacter scale changes", async () => {
-        const addedCharacter = makeCharacterWithLength(1);
+    it("updates camera distance when addedCharacter scale changes", async () => {
+        const addedCharacter = createCharacterWithLength(1);
+
         render(Scene, { characters: [], addedCharacter });
+
         await Promise.resolve();
-        const initial = sceneState.camera.position.length();
-        // Double target, but Svelte spring logic may not directly scale distance; assert any movement occurred
+        const initialPosition = sceneState.camera.position.length();
+        
         addedCharacter.referenceCurve.targetLength = 2;
+
         await Promise.resolve();
-        const next = sceneState.camera.position.length();
-        expect(next).not.toBe(initial);
+        const finalPosition = sceneState.camera.position.length();
+
+        expect(finalPosition).not.toBe(initialPosition);
     });
 });
-
-
