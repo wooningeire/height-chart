@@ -32,7 +32,7 @@ button {
     &:hover,
     &:focus {
         > button-content {
-            --bg-stripe-opacity: 0.5;
+            --bg-stripe-opacity: 0.125;
 
             transform: translateY(-0.25rem);
             animation: bg-slide 1s infinite linear;

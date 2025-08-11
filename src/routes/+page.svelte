@@ -3,16 +3,17 @@ import "./index.scss";
 import {Canvas} from "@threlte/core";
 import Scene from "./Scene.svelte";
 import { SvelteMap } from "svelte/reactivity";
-import {PCFSoftShadowMap, Vector3, TextureLoader, SRGBColorSpace, type Texture} from "three";
+import {PCFSoftShadowMap} from "three";
 import { Character } from "$/lib/types/Character.svelte";
-import { CompositeCurve } from "$/lib/types/CompositeCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
 import CharacterAddForm from "./CharacterAddForm.svelte";
 import CharacterListitem from "./CharacterListitem.svelte";
-import Separator from "@/Separator.svelte";
 import { onMount } from "svelte";
-    import { createTextureFromUrl } from "$/lib/createTexture";
-    import { loadCharacter } from "$/lib/loadCharacter";
+import { loadCharacter } from "$/lib/loadCharacter";
+import { supabaseClient } from "$/lib/supabaseClient";
+import type { User } from "@supabase/supabase-js";
+import DiscordLoginButton from "$/lib/components/DiscordLoginButton.svelte";
+import DiscordLogoutButton from "$/lib/components/DiscordLogoutButton.svelte";
+import UserBadge from "$/lib/components/UserBadge.svelte";
 
 
 const characters = $state(new SvelteMap<string, Character>());
@@ -51,10 +52,30 @@ const loadCharacters = async () => {
 onMount(() => {
     loadCharacters();
 });
+
+
+const userPromise = supabaseClient.auth.getUser();
+
+let user = $state<User | null>(null);
+let userLoaded = $state(false);
+onMount(async () => {
+    user = (await userPromise).data.user;
+    userLoaded = true;
+});
 </script>
 
 <main>
     <character-overlay>
+        {#if userLoaded}
+            {#if user === null}
+                <DiscordLoginButton />
+            {:else}
+                <UserBadge {user} />
+                <DiscordLogoutButton />
+            {/if}
+            
+        {/if}
+
         <CharacterAddForm
             onCreate={character => addedCharacter = character}
             onCancel={() => addedCharacter = null}
@@ -92,28 +113,21 @@ main {
     width: 100vw;
     height: 100vh;
     position: relative;
-    display: grid;
-    place-items: stretch;
+    display: flex;
+    align-items: stretch;
 }
 
 character-overlay {
-    position: fixed;
     padding: 1rem;
     width: 16rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
-    background: oklch(1 0 0 / 0.5);
-    backdrop-filter: blur(0.5rem);
-
-
-    z-index: 1;
 }
 
 scene-container {
-    grid-area: 1/1;
-
+    flex-grow: 1;
+    flex-shrink: 1;
     user-select: none;
 }
 

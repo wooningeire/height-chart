@@ -12,4 +12,7 @@
 
 body {
     font-family: "Atkinson Hyperlegible Next", sans-serif;
+
+    background: oklch(0.3 0.03 250);
+    color: oklch(1 0 0);
 }
