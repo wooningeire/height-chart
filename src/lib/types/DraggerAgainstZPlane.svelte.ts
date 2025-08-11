@@ -1,6 +1,6 @@
 import { SceneState } from "$/lib/types/SceneState.svelte";
 import { modifierKeys } from "$/routes/ModifierKeys.svelte";
-import { useCursor, type IntersectionEvent } from "@threlte/extras";
+import { useCursor } from "@threlte/extras";
 import { Camera, Matrix4, Raycaster, Vector2, Vector3 } from "three";
 
 

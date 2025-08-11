@@ -4,7 +4,7 @@ import {sceneState} from "../lib/types/SceneState.svelte";
 import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
     import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
     import { Matrix4, Vector3 } from "three";
-    import { IntersectionEvent } from "@threlte/extras";
+    import { type IntersectionEvent } from "@threlte/extras";
 
 let {
     position,

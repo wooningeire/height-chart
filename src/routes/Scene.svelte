@@ -1,11 +1,11 @@
 <script lang="ts">
 import {setContext, untrack} from "svelte";
 import {T} from "@threlte/core";
-import {ContactShadows, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
+import {ContactShadows, Environment, interactivity, OrbitControls, SoftShadows} from "@threlte/extras";
 import type { SvelteMap } from "svelte/reactivity";
 import type { Character } from "$/lib/types/Character.svelte";
 import CharacterPlane from "./CharacterPlane.svelte";
-import {Texture, CubicBezierCurve3, PerspectiveCamera, Vector3} from "three";
+import {Texture, CubicBezierCurve3, PerspectiveCamera, Vector3, Scene, Color} from "three";
 import {sceneState} from "$/lib/types/SceneState.svelte";
 import type { Bezier } from "$/lib/types/Bezier.svelte";
     import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
@@ -54,6 +54,7 @@ $effect(() => {
     });
 });
 </script>
+
 
 <T.DirectionalLight
     position={[-0.25, 1, -0.5]}

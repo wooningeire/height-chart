@@ -22,11 +22,6 @@ let {
 </Button>
 
 <style lang="scss">
-character-list-item {
-    display: block;
-    background: oklch(1 0 0 / 0.3333333);
-}
-
 img {
     width: 100%;
     height: 5rem;

@@ -2,10 +2,9 @@
 import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
 import { sceneState } from "$/lib/types/SceneState.svelte";
 import {T} from "@threlte/core";
-    import { modifierKeys } from "./ModifierKeys.svelte";
-    import { MeshLineGeometry, MeshLineMaterial, type IntersectionEvent } from "@threlte/extras";
-    import { Matrix4, Vector3 } from "three";
-    import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
+import { type IntersectionEvent } from "@threlte/extras";
+import { Matrix4, Vector3 } from "three";
+import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
 
 let {
     position,
