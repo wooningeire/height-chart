@@ -82,7 +82,7 @@ describe("./ModifierKeys.svelte", () => {
         const keyupEvent = new KeyboardEvent("keyup", {
             key: "Alt",
             code: "AltLeft",
-            altKey: true,
+            altKey: false,
             ctrlKey: false,
             shiftKey: false,
             metaKey: false,

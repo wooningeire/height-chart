@@ -19,6 +19,7 @@ describe('ImagePlane', () => {
         const mesh = scene.getObjectByName("image-plane") as Mesh;
         expect(mesh).toBeDefined();
 
+        // @ts-expect-error
         const params = mesh.geometry.parameters;
         expect(params.width).toBeCloseTo(2); // width is the aspect ratio
         expect(params.height).toBeCloseTo(1); // height is always 1

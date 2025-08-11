@@ -58,14 +58,25 @@ export class DraggerAgainstZPlane implements IDraggerAgainstZPlane {
         this.#setLeaveCursor();
     };
 
-    readonly onPointerDown = (event: IntersectionEvent<PointerEvent>) => {
-        if (event.nativeEvent.button !== 0) return;
+    readonly onPointerDown = (event: {
+        button: number,
+        clientX: number,
+        clientY: number,
+    }) => {
+        if (event.button !== 0) return;
 
         this.sceneState.cameraControlsEnabled = false;
-        this.pointerDownPosition = {x: event.nativeEvent.clientX, y: event.nativeEvent.clientY};
+        this.pointerDownPosition = {x: event.clientX, y: event.clientY};
     };
 
-    readonly zAxisCoords = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent): Vector3 => {
+    readonly #zAxisCoords = (
+        currentPosition: [number, number, number],
+        groupMatrix: Matrix4,
+        event: {
+            clientX: number,
+            clientY: number,
+        },
+    ): Vector3 => {
         const planeNormal = new Vector3(1, 0, 0);
         const planePoint = new Vector3(...currentPosition).applyMatrix4(groupMatrix);
         
@@ -74,7 +85,14 @@ export class DraggerAgainstZPlane implements IDraggerAgainstZPlane {
         return new Vector3(planePoint.x, intersection.y, intersection.z).applyMatrix4(groupMatrix.clone().invert());
     };
 
-    readonly zPlaneCoords = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent): Vector3 => {
+    readonly #zPlaneCoords = (
+        currentPosition: [number, number, number],
+        groupMatrix: Matrix4,
+        event: {
+            clientX: number,
+            clientY: number,
+        },
+    ): Vector3 => {
         const planeNormal = new Vector3(0, 0, 1);
         const planePoint = new Vector3(...currentPosition).applyMatrix4(groupMatrix);
 
@@ -83,13 +101,27 @@ export class DraggerAgainstZPlane implements IDraggerAgainstZPlane {
         return new Vector3(intersection.x, intersection.y, planePoint.z).applyMatrix4(groupMatrix.clone().invert());
     };
 
-    readonly #localPosition = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
+    readonly #localPosition = (
+        currentPosition: [number, number, number],
+        groupMatrix: Matrix4,
+        event: {
+            clientX: number,
+            clientY: number,
+        },
+    ) => {
         return this.isMovingAlongZAxis
-            ? this.zAxisCoords(currentPosition, groupMatrix, event)
-            : this.zPlaneCoords(currentPosition, groupMatrix, event);
+            ? this.#zAxisCoords(currentPosition, groupMatrix, event)
+            : this.#zPlaneCoords(currentPosition, groupMatrix, event);
     };
 
-    readonly onPointerMove = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
+    readonly onPointerMove = (
+        currentPosition: [number, number, number],
+        groupMatrix: Matrix4,
+        event: {
+            clientX: number,
+            clientY: number,
+        },
+    ) => {
         if (this.pointerDownPosition === null) return;
 
         const diffX = event.clientX - this.pointerDownPosition.x;
@@ -100,7 +132,15 @@ export class DraggerAgainstZPlane implements IDraggerAgainstZPlane {
         this.onPositionDrag?.(this.#localPosition(currentPosition, groupMatrix, event));
     };
 
-    readonly onPointerUp = (currentPosition: [number, number, number], groupMatrix: Matrix4, event: PointerEvent) => {
+    readonly onPointerUp = (
+        currentPosition: [number, number, number],
+        groupMatrix: Matrix4,
+        event: {
+            button: number,
+            clientX: number,
+            clientY: number,
+        },
+    ) => {
         if (event.button !== 0) return;
 
         if (!this.dragging && this.pointerDownPosition !== null) {

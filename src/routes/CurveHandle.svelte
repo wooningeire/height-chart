@@ -3,7 +3,7 @@ import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
 import { sceneState } from "$/lib/types/SceneState.svelte";
 import {T} from "@threlte/core";
     import { modifierKeys } from "./ModifierKeys.svelte";
-    import { MeshLineGeometry, MeshLineMaterial } from "@threlte/extras";
+    import { MeshLineGeometry, MeshLineMaterial, type IntersectionEvent } from "@threlte/extras";
     import { Matrix4, Vector3 } from "three";
     import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
 
@@ -49,7 +49,7 @@ const {onPointerEnter, onPointerLeave, onPointerDown, onPointerMove, onPointerUp
     {position}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
-    onpointerdown={onPointerDown}
+    onpointerdown={(event: IntersectionEvent<PointerEvent>) => onPointerDown(event.nativeEvent)}
 >
     <T.SphereGeometry args={[0.0125]} />
     <T.MeshToonMaterial emissive={dragger.hovering ? "#f00" : "#fff"} />

@@ -4,6 +4,7 @@ import {sceneState} from "../lib/types/SceneState.svelte";
 import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
     import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
     import { Matrix4, Vector3 } from "three";
+    import { IntersectionEvent } from "@threlte/extras";
 
 let {
     position,
@@ -65,7 +66,7 @@ const color = $derived.by(() => {
     {position}
     onpointerenter={onPointerEnter}
     onpointerleave={onPointerLeave}
-    onpointerdown={onPointerDown}
+    onpointerdown={(event: IntersectionEvent<PointerEvent>) => onPointerDown(event.nativeEvent)}
 >
     <T.BoxGeometry args={[0.025, 0.025, 0.025]} />
     <T.MeshToonMaterial emissive={color} />

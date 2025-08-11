@@ -23,7 +23,7 @@ const offset = (i: number) => (i * 2 / (N_SEGMENTS - 1) - 1) * 0.25;
 
 {#if dragger.hovering || dragger.dragging}
     {#if dragger.isMovingAlongZAxis}
-        <T.Mesh>
+        <T.Mesh name="axis-movement-indicator-z">
             <MeshLineGeometry
                 points={Array(N_SEGMENTS).fill(0).map((_, i) => new Vector3(
                     position[0],
@@ -31,6 +31,7 @@ const offset = (i: number) => (i * 2 / (N_SEGMENTS - 1) - 1) * 0.25;
                     position[2] + offset(i),
                 ))}
                 shape="taper"
+                name="axis-movement-indicator-z"
             />
             <MeshLineMaterial
                 color="#aaf"
@@ -38,7 +39,7 @@ const offset = (i: number) => (i * 2 / (N_SEGMENTS - 1) - 1) * 0.25;
             />
         </T.Mesh>
     {:else}
-        <T.Mesh>
+        <T.Mesh name="axis-movement-indicator-x">
             <MeshLineGeometry
                 points={Array(N_SEGMENTS).fill(0).map((_, i) => new Vector3(
                     position[0] + offset(i),
@@ -46,6 +47,7 @@ const offset = (i: number) => (i * 2 / (N_SEGMENTS - 1) - 1) * 0.25;
                     position[2],
                 ))}
                 shape="taper"
+                name="axis-movement-indicator-x"
             />
             <MeshLineMaterial
                 color="#faa"
@@ -54,7 +56,7 @@ const offset = (i: number) => (i * 2 / (N_SEGMENTS - 1) - 1) * 0.25;
         </T.Mesh>
     {/if}
 
-    <T.Mesh>
+    <T.Mesh name="axis-movement-indicator-y">
         <MeshLineGeometry
             points={Array(N_SEGMENTS).fill(0).map((_, i) => new Vector3(
                 position[0],
@@ -62,6 +64,7 @@ const offset = (i: number) => (i * 2 / (N_SEGMENTS - 1) - 1) * 0.25;
                 position[2],
             ))}
             shape="taper"
+            name="axis-movement-indicator-y"
         />
         <MeshLineMaterial
             color="#afa"

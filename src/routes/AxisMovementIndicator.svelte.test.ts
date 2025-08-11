@@ -5,7 +5,7 @@ import type { IDraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.sve
 import type { Object3D } from "three";
 
 describe("AxisMovementIndicator", () => {
-    it("renders indicators when hovering", () => {
+    it("renders X and Y indicators when hovering", () => {
         const dragger: IDraggerAgainstZPlane = {
             hovering: true,
             dragging: false,
@@ -18,11 +18,40 @@ describe("AxisMovementIndicator", () => {
             meshLineScaleFac: 1,
         });
 
-        const mesh = scene.children.find((o: Object3D) => o.type === "Mesh");
-        expect(mesh).toBeDefined();
+        const meshX = scene.getObjectByName("axis-movement-indicator-x");
+        expect(meshX).toBeDefined();
+
+        const meshY = scene.getObjectByName("axis-movement-indicator-y");
+        expect(meshY).toBeDefined();
+
+        const meshZ = scene.getObjectByName("axis-movement-indicator-z");
+        expect(meshZ).toBeUndefined();
     });
 
-    it("renders indicators when not hovering", () => {
+    it("renders Z and Y indicators when hovring while moving along Z axis", () => {
+        const dragger: IDraggerAgainstZPlane = {
+            hovering: true,
+            dragging: false,
+            isMovingAlongZAxis: true,
+        };
+
+        const { scene } = render(AxisMovementIndicator, {
+            position: [0, 0, 0],
+            dragger,
+            meshLineScaleFac: 1,
+        });
+
+        const meshX = scene.getObjectByName("axis-movement-indicator-x");
+        expect(meshX).toBeUndefined();
+
+        const meshY = scene.getObjectByName("axis-movement-indicator-y");
+        expect(meshY).toBeDefined();
+
+        const meshZ = scene.getObjectByName("axis-movement-indicator-z");
+        expect(meshZ).toBeDefined();
+    });
+
+    it("renders no indicators when not hovering", () => {
         const dragger: IDraggerAgainstZPlane = {
             hovering: false,
             dragging: false,
@@ -35,8 +64,14 @@ describe("AxisMovementIndicator", () => {
             meshLineScaleFac: 1,
         });
 
-        const mesh = scene.children.find((o: Object3D) => o.type === "Mesh");
-        expect(mesh).toBeDefined();
+        const meshX = scene.getObjectByName("axis-movement-indicator-x");
+        expect(meshX).toBeUndefined();
+
+        const meshY = scene.getObjectByName("axis-movement-indicator-y");
+        expect(meshY).toBeUndefined();
+
+        const meshZ = scene.getObjectByName("axis-movement-indicator-z");
+        expect(meshZ).toBeUndefined();
     });
 });
 

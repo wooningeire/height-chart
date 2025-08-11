@@ -9,23 +9,19 @@ const createCurve = () => [
 ];
 
 describe("CharacterReferenceCurve", () => {
-    it("renders line mesh and calls onCurveChange when vertex changes", async () => {
-        const onCurveChange = vi.fn();
+    it("renders without errors and creates mesh geometry", () => {
         const curve = createCurve();
-
         const groupMatrix = new Matrix4();
 
-        render(CharacterReferenceCurve, {
+        const { scene } = render(CharacterReferenceCurve, {
             curve,
-            onCurveChange,
-            meshLineScaleFac: 1,
             groupMatrix,
-            showEditor: true
+            meshLineScaleFac: 1,
+            showEditor: false
         });
 
-        // Simulate change by invoking the exported handler through the editor child interface
-        // For now, just assert it renders without throwing (line mesh is created)
-        expect(true).toBe(true);
+        const mesh = scene.children.find((o: any) => o.type === "Mesh");
+        expect(mesh).toBeDefined();
     });
 });
 
