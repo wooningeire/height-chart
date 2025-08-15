@@ -2,14 +2,21 @@
 import { supabaseClient } from '$/lib/supabaseClient';
 import Button from "./Button.svelte";
 
-const signOut = async () => {
+let {
+    onLogout,
+}: {
+    onLogout?: () => void,
+} = $props();
+
+const logout = async () => {
     await supabaseClient.auth.signOut();
+    onLogout?.();
 }
 </script>
 
 <Button
-    onClick={signOut}
-    ariaLabel="Sign out"
+    onClick={logout}
+    ariaLabel="Logout"
 >
-    Sign out
+    Logout
 </Button>

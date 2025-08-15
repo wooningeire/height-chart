@@ -2,39 +2,49 @@ import { db } from "$/lib/server/db";
 import { characterTable, userTable } from "$/lib/server/db/schema";
 import { supabase } from "$/lib/server/supabase";
 import {type RequestHandler, error, json } from "@sveltejs/kit";
+import { eq } from "drizzle-orm";
 
 export const GET: RequestHandler = async () => {
-    try {
-        const characters = await db
-            .select()
-            .from(characterTable);
+    const characters = await db
+        .select({
+            id: characterTable.id,
+            name: characterTable.name,
+            targetLength: characterTable.targetLength,
+            offsetPos: characterTable.offsetPos,
+            offsetScale: characterTable.offsetScale,
+            referenceCurve: characterTable.referenceCurve,
+            ownerUserId: userTable.discordId,
+            ownerAvatarUrl: userTable.discordAvatarUrl,
+            ownerDisplayName: userTable.discordDisplayName,
+        })
+        .from(characterTable)
+        .innerJoin(userTable, eq(characterTable.ownerUserId, userTable.discordId));
 
-        const charactersWithUrls = await Promise.all(
-            characters.map(async (character) => {
-                const imageUrl = `public/${character.id}.png`;
-                const { data: signedUrlData, error: signedUrlError } = await supabase
-                    .storage
-                    .from("character")
-                    .createSignedUrl(imageUrl, 60 * 60 * 24 * 3);
+    const charactersWithUrls = await Promise.all(
+        characters.map(async (character) => {
+            const imageUrl = `public/${character.id}.png`;
+            const { data: signedUrlData, error: signedUrlError } = await supabase
+                .storage
+                .from("character")
+                .createSignedUrl(imageUrl, 60 * 60 * 24 * 3);
 
-                if (signedUrlError) {
-                    return {
-                        ...character,
-                        imageUrl: null,
-                    };
-                }
-
+            if (signedUrlError) {
                 return {
                     ...character,
-                    imageUrl: signedUrlData.signedUrl,
+                    ownerUserId: character.ownerUserId.toString(),
+                    imageUrl: null,
                 };
-            })
-        );
+            }
 
-        return json(charactersWithUrls);
-    } catch (err) {
-        return error(500, "Failed to fetch characters");
-    }
+            return {
+                ...character,
+                ownerUserId: character.ownerUserId.toString(),
+                imageUrl: signedUrlData.signedUrl,
+            };
+        })
+    );
+
+    return json(charactersWithUrls);
 };
 
 export const PUT: RequestHandler = async ({ request }) => {

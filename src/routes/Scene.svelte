@@ -115,9 +115,7 @@ $effect(() => {
 <T.Group>
     {#each characters as [id, character], i (id)}
         <T.Group position={[0, 0, -(i + 1)]}>
-            <CharacterPlane
-                {character}
-            />
+            <CharacterPlane {character} />
         </T.Group>
     {/each}
 </T.Group>

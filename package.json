@@ -39,6 +39,7 @@
 	"dependencies": {
 		"@lucide/svelte": "^0.539.0",
 		"@playwright/test": "^1.54.2",
+		"@supabase/ssr": "^0.6.1",
 		"@supabase/supabase-js": "^2.54.0",
 		"@sveltejs/adapter-auto": "^6.0.2",
 		"@threlte/core": "^8.1.4",

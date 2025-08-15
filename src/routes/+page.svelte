@@ -14,12 +14,14 @@ import type { User } from "@supabase/supabase-js";
 import DiscordLoginButton from "$/lib/components/DiscordLoginButton.svelte";
 import DiscordLogoutButton from "$/lib/components/DiscordLogoutButton.svelte";
 import UserBadge from "$/lib/components/UserBadge.svelte";
+import { CharacterWithOwner } from "$/lib/types/CharacterWithOwner.svelte";
 
 
-const characters = $state(new SvelteMap<string, Character>());
+const characters = $state(new SvelteMap<string, CharacterWithOwner>());
 
 const sortedCharacters = $derived(
     characters.entries()
+        .map(([id, characterWithOwner]) => [id, characterWithOwner.character] as [string, Character])
         .toArray()
         .sort((a, b) => a[1].referenceCurve.targetScaleFac - b[1].referenceCurve.targetScaleFac)
 );
@@ -56,11 +58,28 @@ onMount(() => {
 
 const userPromise = supabaseClient.auth.getUser();
 
-let user = $state<User | null>(null);
+let user = $state.raw<User | null>(null);
 let userLoaded = $state(false);
 onMount(async () => {
     user = (await userPromise).data.user;
     userLoaded = true;
+
+    console.log(user);
+    if (user === null) return;
+
+
+    const response = await fetch("/api/update-user", {
+        method: "POST",
+    });
+
+    console.log(response);
+    if (!response.ok) throw new Error("Failed to login");
+
+    for (const [id, characterWithOwner] of characters) {
+        if (characterWithOwner.ownerUserId !== BigInt(user.id)) continue;
+        characterWithOwner.ownerAvatarUrl = user.user_metadata.avatar_url;
+        characterWithOwner.ownerDisplayName = user.user_metadata.full_name;
+    }
 });
 </script>
 
@@ -71,11 +90,16 @@ onMount(async () => {
                 <DiscordLoginButton />
             {:else}
                 <UserBadge
-                    {user}
+                    avatarUrl={user.user_metadata.avatar_url}
+                    displayName={user.user_metadata.full_name}
                     large
                 />
-                
-                <DiscordLogoutButton />
+
+                <DiscordLogoutButton
+                    onLogout={() => {
+                        user = null;
+                    }}
+                />
             {/if}
             
         {/if}
@@ -86,8 +110,15 @@ onMount(async () => {
             onSubmit={character => {
                 addedCharacter = null;
 
+                if (user === null) return;
+
                 if (character.id) {
-                    characters.set(character.id, character);
+                    characters.set(character.id, new CharacterWithOwner({
+                        character,
+                        ownerUserId: BigInt(user.id),
+                        ownerAvatarUrl: user.user_metadata.avatar_url,
+                        ownerDisplayName: user.user_metadata.full_name,
+                    }));
                 }
             }}
         />
@@ -96,7 +127,7 @@ onMount(async () => {
             <character-list>
                 <h3>Characters</h3>
                 {#each sortedCharacters as [id, character] (id)}
-                    <CharacterListitem {character} />
+                    <CharacterListitem characterWithOwner={characters.get(id)!} />
                 {/each}
             </character-list>
         {/if}

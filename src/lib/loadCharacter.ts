@@ -3,9 +3,21 @@ import { createTextureFromUrl } from "./createTexture";
 import { CompositeCurve } from "./types/CompositeCurve.svelte";
 import { Bezier } from "./types/Bezier.svelte";
 import { Character } from "./types/Character.svelte";
+import { CharacterWithOwner } from "./types/CharacterWithOwner.svelte";
 
 
-export const loadCharacter = (characterData: any) => {
+export const loadCharacter = (characterData: {
+    id: number,
+    name: string,
+    imageUrl: string,
+    targetLength: number,
+    offsetPos: number[],
+    offsetScale: number[],
+    referenceCurve: number[][][],
+    ownerUserId: string,
+    ownerAvatarUrl: string,
+    ownerDisplayName: string,
+}) => {
     const segments = characterData.referenceCurve.map((segmentData: number[][]) => {
         const [start, end, startDeriv, endDeriv] = segmentData;
         return new Bezier({
@@ -21,17 +33,22 @@ export const loadCharacter = (characterData: any) => {
         targetLength: characterData.targetLength,
     });
 
-    const character = new Character({
-        id: characterData.id.toString(),
-        name: characterData.name,
-        imageUrl: characterData.imageUrl,
-        referenceCurve,
-        offsetPos: new Vector3(...characterData.offsetPos),
+    const characterWithOwner = new CharacterWithOwner({
+        character: new Character({
+            id: characterData.id.toString(),
+            name: characterData.name,
+            imageUrl: characterData.imageUrl,
+            referenceCurve,
+            offsetPos: new Vector3(...characterData.offsetPos),
+        }),
+        ownerUserId: BigInt(characterData.ownerUserId),
+        ownerAvatarUrl: characterData.ownerAvatarUrl,
+        ownerDisplayName: characterData.ownerDisplayName,
     });
 
     (async () => {
-        character.texture = await createTextureFromUrl(characterData.imageUrl);
+        characterWithOwner.character.texture = await createTextureFromUrl(characterData.imageUrl);
     })();
 
-    return character;
+    return characterWithOwner;
 };

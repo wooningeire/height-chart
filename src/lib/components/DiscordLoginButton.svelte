@@ -12,7 +12,7 @@ const signInWithDiscord = async () => {
     });
 
     if (error) throw new Error(`Error signing in with Discord: ${error.message}`);
-}
+};
 </script>
 
 <Button

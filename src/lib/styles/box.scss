@@ -1,12 +1,22 @@
 $padding: 0.5rem;
-$bg: var(--cyan-1);
+$bg: var(--light);
 
-@mixin container {
+@mixin raised {
     box-shadow:
         0 0.0625rem 0.25rem oklch(0 0 0 / 0.25),
-        0 0 1rem var(--cyan-1) inset;
+        0 0 1rem var(--light) inset;
 
-    background: $bg;
+    background: var(--light);
+
+    border-radius: 0.5rem;
+}
+
+@mixin depressed {
+    box-shadow:
+        0 0.0625rem 0.25rem oklch(0 0 0 / 0.25) inset,
+        0 0 1rem var(--light);
+
+    background: var(--dark);
 
     border-radius: 0.5rem;
 }

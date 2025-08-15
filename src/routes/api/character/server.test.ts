@@ -22,6 +22,7 @@ vi.mock('$/lib/server/db', () => {
 });
 
 vi.mock('$/lib/server/db/schema', () => ({
+  userTable: {},
   characterTable: {},
 }));
 

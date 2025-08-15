@@ -54,7 +54,7 @@ let {
 
 
 <style lang="scss">
-@use "$lib/styles/raised.scss" as raised;
+@use "$lib/styles/box.scss" as box;
 
 text-entry-total-container {
     display: flex;
@@ -62,10 +62,10 @@ text-entry-total-container {
 }
 
 text-entry-container {
-    @include raised.container;
+    @include box.depressed;
 
     display: flex;
-    gap: raised.$padding;
+    gap: box.$padding;
 }
 
 text-entry-input-container {
@@ -73,9 +73,9 @@ text-entry-input-container {
 }
 
 text-entry-input {
-    @include raised.input;
+    @include box.input;
     
-    border-radius: raised.$padding;
+    border-radius: box.$padding;
 
     text-align: center;
 }

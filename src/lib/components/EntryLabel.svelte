@@ -13,10 +13,10 @@ let {
 <label for={id}>{@render children?.()}</label>
 
 <style lang="scss">
-@use "$lib/styles/raised.scss" as raised;
+@use "$lib/styles/box.scss" as box;
 
 label {
-    padding: raised.$padding raised.$padding raised.$padding 0;
+    padding: box.$padding box.$padding box.$padding 0;
     margin-bottom: -0.25rem;
 
     font-size: 0.8rem;

@@ -1,15 +1,18 @@
 <script lang="ts">
-    import type { Character } from "$/lib/types/Character.svelte";
-    import Button from "@/Button.svelte";
-    import OwnerBadge from "$lib/components/OwnerBadge.svelte";
+import type { Character } from "$/lib/types/Character.svelte";
+    import type { CharacterWithOwner } from "$/lib/types/CharacterWithOwner.svelte";
+import Button from "@/Button.svelte";
+    import UserBadge from "@/UserBadge.svelte";
 
 let {
-    character,
+    characterWithOwner,
     onClick,
 }: {
-    character: Character,
+    characterWithOwner: CharacterWithOwner,
     onClick?: () => void,
 } = $props();
+
+const character = $derived(characterWithOwner.character);
 </script>
 
 
@@ -23,6 +26,12 @@ let {
 
     <img src={character.imageUrl} alt={character.name} />
 </Button>
+
+<UserBadge
+    avatarUrl={characterWithOwner.ownerAvatarUrl}
+    displayName={characterWithOwner.ownerDisplayName}
+/>
+
 
 <style lang="scss">
 img {

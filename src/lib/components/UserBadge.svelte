@@ -1,23 +1,23 @@
 <script lang="ts">
-import type { User } from "@supabase/supabase-js";
-
 let {
-    user,
+    avatarUrl,
+    displayName,
     large = false,
 }: {
-    user: User,
+    avatarUrl: string,
+    displayName: string,
     large?: boolean,
 } = $props();
 </script>
 
 <user-badge class:large>
     <img
-        src={user.user_metadata.avatar_url}
-        alt="{user.user_metadata.full_name} avatar"
+        src={avatarUrl}
+        alt="{displayName} avatar"
         loading="lazy"
     />
 
-    <user-email>{user.user_metadata.full_name}</user-email>
+    <user-email>{displayName}</user-email>
     
 </user-badge>
 

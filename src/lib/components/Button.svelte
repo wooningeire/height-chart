@@ -22,7 +22,7 @@ let {
 </button>
 
 <style lang="scss">
-@use "$lib/styles/raised.scss" as raised;
+@use "$lib/styles/box.scss" as box;
 
 button {
     display: block;
@@ -58,7 +58,7 @@ button {
 }
 
 button-content {
-    @include raised.container;
+    @include box.raised;
 
     background-image:
         repeating-linear-gradient(
@@ -72,7 +72,7 @@ button-content {
 
 
     display: block;
-    padding: raised.$padding;
+    padding: box.$padding;
 
     pointer-events: none;
     

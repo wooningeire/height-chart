@@ -57,7 +57,7 @@ let {
 
 
 <style lang="scss">
-@use "$lib/styles/raised.scss" as raised;
+@use "$lib/styles/box.scss" as box;
 
 number-entry-total-container {
     display: flex;
@@ -65,10 +65,10 @@ number-entry-total-container {
 }
 
 number-entry-container {
-    @include raised.container;
+    @include box.depressed;
 
     display: flex;
-    gap: raised.$padding;
+    gap: box.$padding;
 }
 
 number-entry-input-container {
@@ -76,14 +76,14 @@ number-entry-input-container {
 }
 
 number-entry-input {
-    @include raised.input;
+    @include box.input;
 
-    border-radius: raised.$padding 0 0 raised.$padding;
+    border-radius: box.$padding 0 0 box.$padding;
 
     text-align: right;
 }
 
 label {
-    padding: raised.$padding raised.$padding raised.$padding 0;
+    padding: box.$padding box.$padding box.$padding 0;
 }
 </style>
