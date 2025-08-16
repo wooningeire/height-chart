@@ -54,7 +54,7 @@ let {
 
 
 <style lang="scss">
-@use "$lib/styles/box.scss" as box;
+@use "$/lib/client/styles/box.scss" as box;
 
 text-entry-total-container {
     display: flex;

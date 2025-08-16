@@ -1,14 +1,21 @@
 <script lang="ts">
-import {untrack} from "svelte";
+// External libraries
 import {T} from "@threlte/core";
 import {interactivity, OrbitControls} from "@threlte/extras";
-import type { Character } from "$/lib/types/Character.svelte";
-import CharacterPlane from "./CharacterPlane.svelte";
 import {Vector3} from "three";
-import {sceneState} from "$/lib/types/SceneState.svelte";
-import type { Bezier } from "$/lib/types/Bezier.svelte";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/Addons.js";
+
+// Svelte framework
+import {untrack} from "svelte";
 import { Spring } from "svelte/motion";
+
+// Local types and utilities
+import type { Character } from "$/lib/client/types/Character.svelte";
+import type { Bezier } from "$/lib/client/types/Bezier.svelte";
+import {sceneState} from "$/lib/client/types/SceneState.svelte";
+
+// Local components
+import CharacterPlane from "./CharacterPlane.svelte";
 import Grids from "./Grids.svelte";
 
 let {

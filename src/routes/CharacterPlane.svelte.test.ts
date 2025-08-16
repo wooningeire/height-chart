@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@threlte/test";
 import CharacterPlane from "./CharacterPlane.svelte";
-import { Character } from "$/lib/types/Character.svelte";
-import { CompositeCurve } from "$/lib/types/CompositeCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
+import { Character } from "$/lib/client/types/Character.svelte";
+import { CompositeCurve } from "$/lib/client/types/CompositeCurve.svelte";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
 import { Mesh, Texture, Vector3 } from "three";
 
 function createTexture(width = 100, height = 50): Texture {

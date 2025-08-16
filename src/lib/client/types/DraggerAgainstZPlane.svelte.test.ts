@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
-import { SceneState } from "$/lib/types/SceneState.svelte";
+import { DraggerAgainstZPlane } from "$/lib/client/types/DraggerAgainstZPlane.svelte";
+import { SceneState } from "$/lib/client/types/SceneState.svelte";
 import { Matrix4, PerspectiveCamera, Vector3 } from "three";
 import { modifierKeys } from "$/routes/ModifierKeys.svelte";
 

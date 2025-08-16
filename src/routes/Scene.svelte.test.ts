@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { render } from '@threlte/test';
 import Scene from './Scene.svelte';
 import { Vector3 } from 'three';
-import { Character } from '$/lib/types/Character.svelte';
-import { CompositeCurve } from '$/lib/types/CompositeCurve.svelte';
-import { Bezier } from '$/lib/types/Bezier.svelte';
+import { Character } from '$/lib/client/types/Character.svelte';
+import { CompositeCurve } from '$/lib/client/types/CompositeCurve.svelte';
+import { Bezier } from '$/lib/client/types/Bezier.svelte';
 import type { Object3D } from 'three';
 
 const createCharacter = (id = '1'): Character => {

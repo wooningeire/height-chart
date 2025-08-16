@@ -1,13 +1,13 @@
 <script lang="ts">
-import { Character } from "$/lib/types/Character.svelte";
+import { Character } from "$/lib/client/types/Character.svelte";
 import Button from "@/Button.svelte";
 import Separator from "@/Separator.svelte";
 import {Texture, Vector3, TextureLoader, SRGBColorSpace} from "three";
 import NumberEntry from "@/NumberEntry.svelte";
-import {CompositeCurve} from "$/lib/types/CompositeCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
+import {CompositeCurve} from "$/lib/client/types/CompositeCurve.svelte";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
 import TextEntry from "@/TextEntry.svelte";
-    import { createTextureFromFile, createTextureFromUrl } from "$/lib/createTexture";
+    import { createTextureFromFile, createTextureFromUrl } from "$/lib/client/createTexture";
 
     
 let {

@@ -13,7 +13,7 @@ let {
 <label for={id}>{@render children?.()}</label>
 
 <style lang="scss">
-@use "$lib/styles/box.scss" as box;
+@use "$/lib/client/styles/box.scss" as box;
 
 label {
     padding: box.$padding box.$padding box.$padding 0;

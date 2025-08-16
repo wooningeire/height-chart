@@ -1,9 +1,12 @@
+// External libraries
 import { Vector3 } from "three";
-import { createTextureFromUrl } from "./createTexture";
-import { CompositeCurve } from "./types/CompositeCurve.svelte";
-import { Bezier } from "./types/Bezier.svelte";
-import { Character } from "./types/Character.svelte";
-import { CharacterWithOwner } from "./types/CharacterWithOwner.svelte";
+
+// Local utilities and types
+import { createTextureFromUrl } from "$/lib/client/createTexture";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
+import { Character } from "$/lib/client/types/Character.svelte";
+import { CharacterWithOwner } from "$/lib/client/types/CharacterWithOwner.svelte";
+import { CompositeCurve } from "$/lib/client/types/CompositeCurve.svelte";
 
 
 export const loadCharacter = (characterData: {

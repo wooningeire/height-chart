@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@threlte/test";
 import Scene from "./Scene.svelte";
-import { Character } from "$/lib/types/Character.svelte";
-import { CompositeCurve } from "$/lib/types/CompositeCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
+import { Character } from "$/lib/client/types/Character.svelte";
+import { CompositeCurve } from "$/lib/client/types/CompositeCurve.svelte";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
 import { Vector3 } from "three";
-import { sceneState } from "$/lib/types/SceneState.svelte";
+import { sceneState } from "$/lib/client/types/SceneState.svelte";
 
 vi.mock("svelte/motion", () => {
     class InstantSpring<T = number> {

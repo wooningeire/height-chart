@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { CompositeCurve } from "$/lib/types/CompositeCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
+import { CompositeCurve } from "$/lib/client/types/CompositeCurve.svelte";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
 import { Vector3 } from "three";
 
 describe("CompositeCurve", () => {

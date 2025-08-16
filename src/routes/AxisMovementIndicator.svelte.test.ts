@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@threlte/test";
 import AxisMovementIndicator from "./AxisMovementIndicator.svelte";
-import type { IDraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
+import type { IDraggerAgainstZPlane } from "$/lib/client/types/DraggerAgainstZPlane.svelte";
 import type { Object3D } from "three";
 
 describe("AxisMovementIndicator", () => {

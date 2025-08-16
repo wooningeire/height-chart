@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { Character } from "$/lib/types/Character.svelte";
-    import type { CharacterWithOwner } from "$/lib/types/CharacterWithOwner.svelte";
+import type { Character } from "$/lib/client/types/Character.svelte";
+    import type { CharacterWithOwner } from "$/lib/client/types/CharacterWithOwner.svelte";
 import Button from "@/Button.svelte";
     import UserBadge from "@/UserBadge.svelte";
 

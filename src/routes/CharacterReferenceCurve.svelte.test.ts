@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@threlte/test";
 import CharacterReferenceCurve from "./CharacterReferenceCurve.svelte";
-import { Bezier } from "$/lib/types/Bezier.svelte";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
 import { Matrix4, Vector3 } from "three";
 
 const createCurve = () => [

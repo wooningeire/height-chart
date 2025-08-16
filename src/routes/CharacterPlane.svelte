@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { Character } from "$/lib/types/Character.svelte";
+import type { Character } from "$/lib/client/types/Character.svelte";
 import { T } from "@threlte/core";
 import {Group, Matrix4, Mesh, Texture, Vector3} from "three";
-import type { Bezier } from "$/lib/types/Bezier.svelte";
+import type { Bezier } from "$/lib/client/types/Bezier.svelte";
     import { Spring } from "svelte/motion";
     import ImagePlane from "./ImagePlane.svelte";
     import CurveVertex from "./CurveVertex.svelte";

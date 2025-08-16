@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Bezier } from "$/lib/types/Bezier.svelte";
+import { Bezier } from "$/lib/client/types/Bezier.svelte";
 import { CubicBezierCurve3, Vector3 } from "three";
 
 describe("Bezier", () => {

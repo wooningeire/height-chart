@@ -1,20 +1,29 @@
 <script lang="ts">
-import "./index.scss";
+// External libraries
 import {Canvas} from "@threlte/core";
-import Scene from "./Scene.svelte";
-import { SvelteMap } from "svelte/reactivity";
 import {PCFSoftShadowMap} from "three";
-import { Character } from "$/lib/types/Character.svelte";
+import type { User } from "@supabase/supabase-js";
+
+// Svelte framework
+import { onMount } from "svelte";
+import { SvelteMap } from "svelte/reactivity";
+
+// Local components and utilities
+import { Character } from "$/lib/client/types/Character.svelte";
+import { CharacterWithOwner } from "$/lib/client/types/CharacterWithOwner.svelte";
+import { loadCharacter } from "$/lib/client/loadCharacter";
+import { supabaseClient } from "$/lib/client/supabaseClient";
+import DiscordLoginButton from "$/lib/client/components/DiscordLoginButton.svelte";
+import DiscordLogoutButton from "$/lib/client/components/DiscordLogoutButton.svelte";
+import UserBadge from "$/lib/client/components/UserBadge.svelte";
+
+// Local route components
+import Scene from "./Scene.svelte";
 import CharacterAddForm from "./CharacterAddForm.svelte";
 import CharacterListitem from "./CharacterListitem.svelte";
-import { onMount } from "svelte";
-import { loadCharacter } from "$/lib/loadCharacter";
-import { supabaseClient } from "$/lib/supabaseClient";
-import type { User } from "@supabase/supabase-js";
-import DiscordLoginButton from "$/lib/components/DiscordLoginButton.svelte";
-import DiscordLogoutButton from "$/lib/components/DiscordLogoutButton.svelte";
-import UserBadge from "$/lib/components/UserBadge.svelte";
-import { CharacterWithOwner } from "$/lib/types/CharacterWithOwner.svelte";
+
+// Styles
+import "./index.scss";
 
 
 const characters = $state(new SvelteMap<string, CharacterWithOwner>());
@@ -90,7 +99,7 @@ onMount(async () => {
     <character-overlay>
         {#if userLoaded}
             {#if user === null}
-                <DiscordLoginButton onLoginSuccess={(newUser) => { user = newUser; }} />
+                <DiscordLoginButton onLoginSuccess={(newUser: User) => { user = newUser; }} />
             {:else}
                 <UserBadge
                     avatarUrl={user.user_metadata.avatar_url}

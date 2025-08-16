@@ -1,7 +1,7 @@
 <script lang="ts">
 import {T} from "@threlte/core";
-import {sceneState} from "../lib/types/SceneState.svelte";
-import { DraggerAgainstZPlane } from "$/lib/types/DraggerAgainstZPlane.svelte";
+import {sceneState} from "$/lib/client/types/SceneState.svelte";
+import { DraggerAgainstZPlane } from "$/lib/client/types/DraggerAgainstZPlane.svelte";
     import ZAxisMovementIndicator from "./AxisMovementIndicator.svelte";
     import { Matrix4, Vector3 } from "three";
     import { type IntersectionEvent } from "@threlte/extras";

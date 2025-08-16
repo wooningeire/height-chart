@@ -57,7 +57,7 @@ let {
 
 
 <style lang="scss">
-@use "$lib/styles/box.scss" as box;
+@use "$/lib/client/styles/box.scss" as box;
 
 number-entry-total-container {
     display: flex;

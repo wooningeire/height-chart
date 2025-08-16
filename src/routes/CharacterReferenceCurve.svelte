@@ -4,7 +4,7 @@ import {T} from "@threlte/core";
 import {MeshLineGeometry, MeshLineMaterial} from "@threlte/extras";
 import CurveVertex from "./CurveVertex.svelte";
 import CurveHandle from "./CurveHandle.svelte";
-    import type { Bezier } from "$/lib/types/Bezier.svelte";
+    import type { Bezier } from "$/lib/client/types/Bezier.svelte";
 
 let {
     curve,

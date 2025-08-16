@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { User } from '@supabase/supabase-js';
-import { supabaseClient } from '$/lib/supabaseClient';
+import { supabaseClient } from '$lib/client/supabaseClient';
 import Button from './Button.svelte';
 
 let {
