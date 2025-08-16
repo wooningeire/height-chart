@@ -33,8 +33,7 @@ const loadCharacters = async () => {
     try {
         const response = await fetch("/api/character");
         if (!response.ok) {
-            console.error("Failed to load characters");
-            return;
+            throw new Error("Failed to load characters");
         }
 
         const charactersData = await response.json();
@@ -47,7 +46,7 @@ const loadCharacters = async () => {
             characters.set(character.id!, character);
         }
     } catch (error) {
-        console.error("Failed to fetch characters:", error);
+        throw new Error("Failed to fetch characters");
     }
 };
 
@@ -57,26 +56,30 @@ onMount(() => {
 
 
 const userPromise = supabaseClient.auth.getUser();
+const sessionPromise = supabaseClient.auth.getSession();
 
 let user = $state.raw<User | null>(null);
 let userLoaded = $state(false);
 onMount(async () => {
-    user = (await userPromise).data.user;
+    const [userResponse, sessionResponse] = await Promise.all([userPromise, sessionPromise]);
+
+    user = userResponse.data.user;
     userLoaded = true;
 
-    console.log(user);
-    if (user === null) return;
+    if (user === null || sessionResponse.data.session === null) return;
 
 
     const response = await fetch("/api/update-user", {
         method: "POST",
+        headers: {
+            "Authorization": `Bearer ${sessionResponse.data.session.access_token}`,
+        },
     });
 
-    console.log(response);
     if (!response.ok) throw new Error("Failed to login");
 
     for (const [id, characterWithOwner] of characters) {
-        if (characterWithOwner.ownerUserId !== BigInt(user.id)) continue;
+        if (characterWithOwner.ownerUserId !== BigInt(user.user_metadata.provider_id)) continue;
         characterWithOwner.ownerAvatarUrl = user.user_metadata.avatar_url;
         characterWithOwner.ownerDisplayName = user.user_metadata.full_name;
     }
@@ -87,7 +90,7 @@ onMount(async () => {
     <character-overlay>
         {#if userLoaded}
             {#if user === null}
-                <DiscordLoginButton />
+                <DiscordLoginButton onLoginSuccess={(newUser) => { user = newUser; }} />
             {:else}
                 <UserBadge
                     avatarUrl={user.user_metadata.avatar_url}

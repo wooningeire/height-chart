@@ -46,8 +46,14 @@ export const loadCharacter = (characterData: {
         ownerDisplayName: characterData.ownerDisplayName,
     });
 
+    console.log(characterData);
     (async () => {
-        characterWithOwner.character.texture = await createTextureFromUrl(characterData.imageUrl);
+        try {
+            characterWithOwner.character.texture = await createTextureFromUrl(characterData.imageUrl);
+        } catch (error) {
+            console.log(characterData);
+            console.error("Failed to load character texture", error);
+        }
     })();
 
     return characterWithOwner;
