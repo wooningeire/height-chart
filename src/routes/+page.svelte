@@ -166,7 +166,9 @@ character-overlay {
 
 scene-container {
     flex-grow: 1;
-    flex-shrink: 1;
+    display: block;
+    width: 0;
+
     user-select: none;
 }
 
